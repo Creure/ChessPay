@@ -12,7 +12,7 @@
     <meta name="author" content="">
     <meta name="keywords" content="">
 
-    <!-- Favicon -->
+    <!-- Favicon 
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'Home/assets/images/favicon/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'Home/assets/images/favicon/favicon-32x32.png'%}">
     <link rel="icon" type="image/png" sizes="16x16" href="Home/assets/images/favicon/favicon-16x16.png">
@@ -20,7 +20,7 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
 
-    <!-- Google Font-->
+    Google Font-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Overpass:wght@200;300;400;600&display=swap" rel="stylesheet">
@@ -31,6 +31,7 @@
     <link rel="stylesheet" href="{% static 'Home/assets/css/board.css'%}" />
     <!-- Main CSS -->
     <link rel="stylesheet" href="{% static 'Home/assets/css/theme.bundle.css'%}" />
+    <script type='module' src="{% static 'Home/assets/js/settings.js' %}"></script>
 
     <!-- Fix for custom scrollbar if JS is disabled-->
     <noscript>
@@ -155,7 +156,7 @@
                                 <tr>
                                     <td class="text-white">
                                         <picture class="avatar-group-img" data-bs-toggle="tooltip" data-bs-placement="top" title="Patty Smith">
-                                            <img class="f-w-10 rounded-circle" src="{%static 'Home/assets/images/profile-small-6.jpeg'%}" alt="">
+                                            <img class="f-w-10 rounded-circle" src="{%static 'Home/assets/images/profile-small-6.jpeg'%}" alt="" >
                                          </picture>
                                          Player #1 
                                 </td>
@@ -195,156 +196,157 @@
                 <!-- board-->
                 <div class="dad-container">
                     <div class="main-container">
-                        <div class="file-a files">
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/black/rook.png' %}" alt="" />
-                        </div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/black/pawn.png' %}" alt="" name="pawn-a-black" />
-                        </div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}" alt="" name="pawn-a-white" />
-                        </div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/white/rook.png' %}" alt="" />
-                        </div>
-                        </div>
-                        <div class="file-b files">
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/black/knight.png' %}" alt="" />
-                        </div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/black/pawn.png' %}" alt="" name="pawn-b-black"/>
-                        </div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}" alt="" name="pawn-b-white"/>
-                        </div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/white/knight.png' %}" alt="" />
-                        </div>
-                        </div>
-                        <div class="file-c files">
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/black/bishop.png' %}" alt="" />
-                        </div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/black/pawn.png' %}" alt="" name="pawn-c-black"/>
-                        </div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}" alt="" name="pawn-c-white" />
-                        </div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/white/bishop.png' %}" alt="" />
-                        </div>
-                        </div>
-                        <div class="file-d files">
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/black/queen.png' %}" alt="" />
-                        </div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/black/pawn.png' %}" alt="" name="pawn-d-black" />
-                        </div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}" alt="" name="pawn-d-white" />
-                        </div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/white/queen.png' %}" alt="" />
-                        </div>
-                        </div>
-                        <div class="file-e files">
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/black/king.png' %}" alt="" />
-                        </div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/black/pawn.png' %}" alt=""  name="pawn-e-black"/>
-                        </div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}" alt="" name="pawn-e-white" />
-                        </div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/white/king.png' %}" alt="" />
-                        </div>
-                        </div>
-                        <div class="file-f files">
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/black/bishop.png' %}" alt="" />
-                        </div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/black/pawn.png' %}" alt="" name="pawn-f-black"/>
-                        </div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}" alt="" name="pawn-f-white"/>
-                        </div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/white/bishop.png' %}" alt="" />
-                        </div>
-                        </div>
-                        <div class="file-g files">
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/black/knight.png' %}" alt="" />
-                        </div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/black/pawn.png' %}" alt="" name="pawn-g-black" />
-                        </div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}" alt=""  name="pawn-g-white"/>
-                        </div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/white/knight.png' %}" alt="" />
-                        </div>
-                        </div>
-                        <div class="file-h files">
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/black/rook.png' %}" alt="" />
-                        </div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/black/pawn.png' %}" alt="" name="pawn-h-black"/>
-                        </div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}"   name="pawn-h-white" alt="" />
-                        </div>
-                        <div class="square">
-                            <img src="{% static 'Home/assets/images/pieces/white/rook.png' %}" alt="" />
-                        </div>
+                          <div class="file-a files">
+                            <div class="square" name='a8'>
+                                <img src="{% static 'Home/assets/images/pieces/black/rook.png' %}" alt=""  name=""  onclick="" />
+                            </div>
+                            <div class="square" name='a7'>
+                                <img src="{% static 'Home/assets/images/pieces/black/pawn.png' %}" alt=""   id="pawn-a-black"  />
+                            </div>
+                            <div class="square" name="a6"></div>
+                            <div class="square" name="a5" ></div>
+                            <div class="square" name="a4"></div>
+                            <div class="square" name="a3"></div>
+                            <div class="square" name="a2">
+                                <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}" alt=""  id="pawn-a-white" />
+                            </div>
+                            <div class="square" name="a1">
+                                <img src="{% static 'Home/assets/images/pieces/white/rook.png' %}" alt=""  />
+                            </div>
+                            </div>
+                            <div class="file-b files">
+                            <div class="square" name="b8">
+                                <img src="{% static 'Home/assets/images/pieces/black/knight.png' %}" alt=""  />
+                            </div>
+                            <div class="square" name="b7">
+                                <img src="{% static 'Home/assets/images/pieces/black/pawn.png' %}" alt=""  id="pawn-b-black"/>
+                            </div>
+                            <div class="square" name="b6"></div>
+                            <div class="square" name="b5"></div>
+                            <div class="square" name="b4"></div>
+                            <div class="square" name="b3"></div> 
+                            <div class="square"name="b2">
+                                <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}" alt=""  name="b2"  id="pawn-b-white"/>
+                            </div>
+                            <div class="square" name="b1">
+                                <img src="{% static 'Home/assets/images/pieces/white/knight.png' %}" alt=""  />
+                            </div>
+                            </div>
+                            <div class="file-c files">
+                            <div class="square" name="c8">
+                                <img src="{% static 'Home/assets/images/pieces/black/bishop.png' %}" alt=""  />
+                            </div>
+                            <div class="square" name="c7">
+                                <img src="{% static 'Home/assets/images/pieces/black/pawn.png' %}" alt=""  id="pawn-c-black"/>
+                            </div>
+                            <div class="square" name="c6"></div>
+                            <div class="square" name="c5" ></div>
+                            <div class="square" name="c4"></div>
+                            <div class="square" name="c3"></div>
+                            <div class="square" name="c2">
+                                <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}" alt=""  id="pawn-c-white" />
+                            </div>
+                            <div class="square" name="c1">
+                                <img src="{% static 'Home/assets/images/pieces/white/bishop.png' %}" alt=""  />
+                            </div>
+                            </div>
+                            <div class="file-d files">
+                            <div class="square" name="d8">
+                                <img src="{% static 'Home/assets/images/pieces/black/queen.png' %}" alt=""  />
+                            </div>
+                            <div class="square" name="d7">
+                                <img src="{% static 'Home/assets/images/pieces/black/pawn.png' %}" alt=""  id="pawn-d-black" />
+                            </div>
+                            <div class="square" name="d6"></div>
+                            <div class="square" name="d5"></div>
+                            <div class="square" name="d4"></div>
+                            <div class="square" name="d3"></div>
+                            <div class="square" name="d2">
+                                <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}" alt=""  id="pawn-d-white" />
+                            </div>
+                            <div class="square" name="d1">
+                                <img src="{% static 'Home/assets/images/pieces/white/queen.png' %}" alt=""  />
+                            </div>
+                            </div>
+                            <div class="file-e files">
+                            <div class="square" name="e8">
+                                <img src="{% static 'Home/assets/images/pieces/black/king.png' %}" alt=""  />
+                            </div>
+                            <div class="square"  name="e7">
+                                <img src="{% static 'Home/assets/images/pieces/black/pawn.png' %}" alt=""   id="pawn-e-black"/>
+                            </div>
+                            <div class="square" name="e6"></div>
+                            <div class="square" name="e5"></div>
+                            <div class="square" name="e4"></div>
+                            <div class="square" name="e3"></div>
+                            <div class="square" name="e2">
+                                <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}" alt=""  id="pawn-e-white" />
+                            </div>
+                            <div class="square" name="e1">
+                                <img src="{% static 'Home/assets/images/pieces/white/king.png' %}" alt=""  />
+                            </div>
+                            </div>
+                            <div class="file-f files">
+                            <div class="square" name="f8">
+                                <img src="{% static 'Home/assets/images/pieces/black/bishop.png' %}" alt=""  />
+                            </div>
+                            <div class="square" name="f7">
+                                <img src="{% static 'Home/assets/images/pieces/black/pawn.png' %}" alt=""  id="pawn-f-black"/>
+                            </div>
+                            <div class="square" name="f6"></div>
+                            <div class="square" name="f5"></div>
+                            <div class="square" name="f4"></div>
+                            <div class="square" name="f3"></div>
+                            <div class="square" name="f2">
+                                <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}" alt=""  id="pawn-f-white"/>
+                            </div>
+                            <div class="square" name="f1">
+                                <img src="{% static 'Home/assets/images/pieces/white/bishop.png' %}" alt=""  />
+                            </div>
+                            </div>
+                            <div class="file-g files">
+                            <div class="square" name="g8">
+                                <img src="{% static 'Home/assets/images/pieces/black/knight.png' %}" alt=""  />
+                            </div>
+                            <div class="square" name="g7">
+                                <img src="{% static 'Home/assets/images/pieces/black/pawn.png' %}" alt=""  id="pawn-g-black" />
+                            </div>
+                            <div class="square" name="g6"></div>
+                            <div class="square" name="g5"></div>
+                            <div class="square" name="g4"></div>
+                            <div class="square" name="g3"></div>
+                            <div class="square" name="g2">
+                                <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}" alt=""   id="pawn-g-white"/>
+                            </div>
+                            <div class="square" name="g1">
+                                <img src="{% static 'Home/assets/images/pieces/white/knight.png' %}" alt=""  />
+                            </div>
+                          </div>
+                          <div class="file-h files">
+                          <div class="square" name="h8">
+                              <img src="{% static 'Home/assets/images/pieces/black/rook.png' %}" alt=""  />
+                          </div>
+                          <div class="square" name="h7">
+                              <img src="{% static 'Home/assets/images/pieces/black/pawn.png' %}" alt=""  id="pawn-h-black"/>
+                          </div>
+                          <div class="square" name="h6"></div>
+                          <div class="square" name="h5"></div>
+                          <div class="square" name="h4"></div>
+                          <div class="square" name="h3"></div>
+                          <div class="square" name="h2">
+                              <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}"   id="pawn-h-white" alt=""  />
+                          </div>
+                          <div class="square" name="h1">
+                              <img src="{% static 'Home/assets/images/pieces/white/rook.png' %}" alt=""  />
+                          </div>
                         </div>
                     </div>
                     </div>
+                </div>
                           
                 <!-- /board end-->
                 <!-- Sales Conversions Widget-->
-
+            
             </div>
             <!-- Middle Row Widgets-->
 
@@ -366,7 +368,7 @@
                                         <tr>
                                             <td class="text-white">
                                                 <picture class="avatar-group-img" data-bs-toggle="tooltip" data-bs-placement="top" title="Patty Smith">
-                                                    <img class="f-w-10 rounded-circle" src="{%static 'Home/assets/images/profile-small-6.jpeg'%}" alt="">
+                                                    <img class="f-w-10 rounded-circle" src="{%static 'Home/assets/images/profile-small-6.jpeg'%}" alt="" >
                                                  </picture>
                                                  Player #1 
                                         </td>
@@ -466,8 +468,8 @@
               </div>
               <div class="offcanvas-body">
             
-                <!-- Notification-->
-                <div class="d-flex justify-content-start align-items-start p-3 rounded bg-light mb-3">
+                <!-- Notification-
+                <div class="d-flex justify-content-start align-items-start p-3 rounded bg-light mb-3"> 
                   <div class="position-relative mt-1 ">
                     <picture class="avatar avatar-sm">
                       <img src="Home/assets/images/profile-small-2.jpeg"
@@ -482,9 +484,9 @@
                     <span class="fs-xs fw-bolder text-muted text-uppercase">5 mins ago</span>
                   </div>
                 </div>
-                <!-- / Notification-->
+                 / Notification-->
             
-                <!-- Notification-->
+                <!-- Notification-
                 <div class="d-flex justify-content-start align-items-start p-3 rounded bg-light mb-3">
                   <div class="position-relative mt-1 ">
                     <picture class="avatar avatar-sm">
@@ -500,9 +502,9 @@
                     <span class="fs-xs fw-bolder text-muted text-uppercase">30 mins ago</span>
                   </div>
                 </div>
-                <!-- / Notification-->
+                 / Notification-->
             
-                <!-- Notification-->
+                <!-- Notification 
                 <div class="d-flex justify-content-start align-items-start p-3 rounded bg-light mb-3">
                   <div class="position-relative mt-1 ">
                     <picture class="avatar avatar-sm">
@@ -518,7 +520,7 @@
                     <span class="fs-xs fw-bolder text-muted text-uppercase">43 mins ago</span>
                   </div>
                 </div>
-                <!-- / Notification-->
+                / Notification-->
             
                 <!-- View all Btn-->
                 <a href="#" class="btn btn-outline-secondary w-100 mt-4" role="button">View all notifications</a>
@@ -550,8 +552,7 @@
                     <div class="d-flex justify-content-center align-items-center py-3">
                         <a class="m-0" href="index.html">
                             <div class="d-flex align-items-center justify-content-center">
-                                <svg class="f-w-6 me-2 text-primary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 398.39 353.81"><polygon points="228.38 33.94 0 262.32 0 0 119.61 0 119.61 43.01 101.9 60.73 86.02 76.61 86.02 33.6 33.6 33.6 33.6 181.2 214.46 0.34 390.66 0.34 242.09 148.91 218.73 124.76 309.55 33.94 228.38 33.94" fill="currentColor"/><polygon points="398.39 353.81 217.51 353.81 131.04 261.75 45.09 353.81 0 353.81 0 353.49 131.26 212.91 232.05 320.21 317.27 320.21 170.28 173.21 194.19 149.29 194.19 149.55 254.9 210.51 254.97 210.39 398.39 353.81" fill="currentColor"/></svg>
-                                <span class="fw-bold fs-3 text-white">Kavlan</span>
+                                <span class="fw-bold fs-3 text-white">ChessPay</span>
                             </div>                    </a>
                     </div>
                     <!-- / Mobile Logo-->
@@ -565,14 +566,12 @@
                             </picture>
                             <span class="dot bg-success avatar-dot"></span>
                         </div>
-                        <p class="mb-0 mt-3 text-white">Robert Jones</p>
-                        <small>robert.jones@outlook.com</small>
+                        <p class="mb-0 mt-3 text-white">♔ChessCoin♚</p>
+                        <!--<small>robert.jones@outlook.com</small> -->
                         <div class="d-flex flex-wrap mt-2 justify-content-between align-items-center">
-                            <div class="py-2 f-h-9 px-3 d-flex justify-content-center align-items-center bg-dark-opacity rounded p-2 small fw-bolder me-1">
-                                <i class="ri-map-pin-line me-2"></i> London, UK
-                            </div>
+                            
     
-                            <!-- User profile dropdown-->
+                            <!-- User profile dropdown
                             <div class="dropdown m-0">
                                 <button class="border-0 rounded px-2 f-h-9 bg-dark-opacity p-0 text-body" type="button" id="profileDropdown"
                                   data-bs-toggle="dropdown" aria-expanded="false">
@@ -592,7 +591,7 @@
                                         class="ri-lock-line me-2"></i> Logout</a></li>
                                 </ul>
                               </div>
-                            <!-- / User profile dropdown-->
+                             / User profile dropdown-->
                         </div>
                     </div>
                     <!-- User Details-->
@@ -668,13 +667,14 @@
 
     <!-- Theme JS -->
     <!-- Vendor JS -->
-    <script src="Home/assets/js/vendor.bundle.js"></script>
+    <script src="{% static 'Home/assets/js/vendor.bundle.js' %}"></script>
     
     <!-- Theme JS -->
-    <script src="Home/assets/js/theme.bundle.js"></script>
+    <script src="{% static 'Home/assets/js/theme.bundle.js' %}"></script>
     
-    <script src="{% static 'Home/assets/js/board-position-data.js' %}"></script>
     <script src="{% static 'Home/assets/js/pieces.js' %}"></script>
+    <script src="{% static 'Home/assets/js/chess.js' %}"></script>
+    <script src="{% static 'Home/assets/js/nush.js' %}"></script>
 </body>
 
 </html>

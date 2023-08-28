@@ -16,6 +16,8 @@
     background-color: #EEEED2;
     width: 70px;
     height: 70px;
+    
+  
 }
 
 
@@ -40,3 +42,9 @@
 img {
     width: 100%;
 }
+
+img:hover {
+    
+    transform: scale(1.1); 
+    cursor: pointer; 
+  }
