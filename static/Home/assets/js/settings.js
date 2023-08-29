@@ -1,3 +1,17 @@
+
+
+var position = {
+    'a': 0,
+    'b': 1,
+    'c': 2,
+    'd': 3,
+    'e': 4,
+    'f': 5,
+    'g': 6,
+    'h': 7
+  };
+
+
 var img_pieces = {
     'pawn-a-white': 'a2',
     'pawn-a-black': 'a7',
@@ -18,4 +32,4 @@ var img_pieces = {
 
 };
 
-data_pieces = Object.entries(img_pieces);
+var data_pieces = Object.entries(img_pieces);

@@ -31,10 +31,8 @@
     <link rel="stylesheet" href="{% static 'Home/assets/css/board.css'%}" />
     <!-- Main CSS -->
     <link rel="stylesheet" href="{% static 'Home/assets/css/theme.bundle.css'%}" />
-    <script type='module' src="{% static 'Home/assets/js/settings.js' %}"></script>
 
     <!-- Fix for custom scrollbar if JS is disabled-->
-    <noscript>
         <style>
           /**
           * Reinstate scrolling for non-JS clients
@@ -671,9 +669,12 @@
     
     <!-- Theme JS -->
     <script src="{% static 'Home/assets/js/theme.bundle.js' %}"></script>
-    
+    <!-- chess logic-->
+
     <script src="{% static 'Home/assets/js/pieces.js' %}"></script>
     <script src="{% static 'Home/assets/js/chess.js' %}"></script>
+    <script  src="{% static 'Home/assets/js/settings.js' %}"></script>
+
     <script src="{% static 'Home/assets/js/nush.js' %}"></script>
 </body>
 
