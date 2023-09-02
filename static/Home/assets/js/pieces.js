@@ -1,4 +1,3 @@
-
 class pawn{
 
     constructor(color, position) {
@@ -7,13 +6,15 @@ class pawn{
         this.eve_move = false;
         this.row = position[0];
         this.piece = 'pawn'
-
+       
       }
 
     allows_basic_move(){
         // A2
         // allow move 
+        //console.log(ChessBoard)
         var allows_move = []
+        
 
         if(this.color == 'white'){
             var new_position = parseInt(this.position[1]) + 1 
@@ -25,12 +26,10 @@ class pawn{
                 new_position = this.position[0] + new_position.toString();
                 allows_move.push(new_position)
             }
-            //We needs to check that new_position has a piece on it
-            if(false){
+            
+            
 
-            }
-
-            return  allows_move // ['a3', 'a4]
+        
         }
         else if (this.color == 'black'){
             var new_position = parseInt(this.position[1]) - 1 
@@ -43,14 +42,26 @@ class pawn{
                 allows_move.push(new_position)
 
             }
-            //We needs to check that new_position has a piece on it
-            if(false){
-
-            }
-
-            return  allows_move // ['a3', 'a4]
-            
+           
         }
+        //We needs to check that new_position has a piece on it var
+        allows_move.forEach(function(move){
+            
+            var row = changes_location_to_matrix(move)
+
+          
+            var piece = chess_Match.ChessBoard[row[1]][row[0]]
+            if ( piece instanceof Object){
+                // remove that
+                
+                allows_move = []
+            }
+        });
+                
+        return  allows_move // ['a3', 'a4]
+        
+            
+         
 
     
     }

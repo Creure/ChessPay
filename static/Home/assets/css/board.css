@@ -41,10 +41,14 @@
 
 img {
     width: 100%;
+    user-select: none;
+    -webkit-user-select: none; 
+    -moz-user-select: none; 
 }
 
 img:hover {
     
     transform: scale(1.1); 
-    cursor: pointer; 
+    cursor: pointer;
+    
   }
