@@ -196,7 +196,7 @@
                     <div class="main-container">
                           <div class="file-a files">
                             <div class="square" name='a8'>
-                                <img src="{% static 'Home/assets/images/pieces/black/rook.png' %}" alt="" draggable="false"  name=""  onclick="" />
+                                <img src="{% static 'Home/assets/images/pieces/black/rook.png' %}" alt="" draggable="false" id="rook-a-black" name=""  onclick="" />
                             </div>
                             <div class="square" name='a7'>
                                 <img src="{% static 'Home/assets/images/pieces/black/pawn.png' %}" alt="" draggable="false"   id="pawn-a-black"  />
@@ -209,7 +209,7 @@
                                 <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}" alt="" draggable="false"  id="pawn-a-white" />
                             </div>
                             <div class="square" name="a1">
-                                <img src="{% static 'Home/assets/images/pieces/white/rook.png' %}" alt="" draggable="false"  />
+                                <img src="{% static 'Home/assets/images/pieces/white/rook.png' %}" alt="" draggable="false"  id="rook-a-white" />
                             </div>
                             </div>
                             <div class="file-b files">
@@ -224,10 +224,10 @@
                             <div class="square" name="b4"></div>
                             <div class="square" name="b3"></div> 
                             <div class="square"name="b2">
-                                <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}" alt="" draggable="false"  name="b2"  id="pawn-b-white"/>
+                                <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}" alt="" draggable="false"    id="pawn-b-white"/>
                             </div>
                             <div class="square" name="b1">
-                                <img src="{% static 'Home/assets/images/pieces/white/knight.png' %}" alt="" draggable="false"  />
+                                <img src="{% static 'Home/assets/images/pieces/white/knight.png' %}" alt="" draggable="false"  id="knight-b-white" />
                             </div>
                             </div>
                             <div class="file-c files">
@@ -317,12 +317,12 @@
                                 <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}" alt="" draggable="false"   id="pawn-g-white"/>
                             </div>
                             <div class="square" name="g1">
-                                <img src="{% static 'Home/assets/images/pieces/white/knight.png' %}" alt="" draggable="false"  />
+                                <img src="{% static 'Home/assets/images/pieces/white/knight.png' %}" alt="" draggable="false"  id="knight-g-white" />
                             </div>
                           </div>
                           <div class="file-h files">
                           <div class="square" name="h8">
-                              <img src="{% static 'Home/assets/images/pieces/black/rook.png' %}" alt="" draggable="false"  />
+                              <img src="{% static 'Home/assets/images/pieces/black/rook.png' %}" alt="" draggable="false" id="rook-h-black"  />
                           </div>
                           <div class="square" name="h7">
                               <img src="{% static 'Home/assets/images/pieces/black/pawn.png' %}" alt="" draggable="false"  id="pawn-h-black"/>
@@ -335,7 +335,7 @@
                               <img src="{% static 'Home/assets/images/pieces/white/pawn.png' %}"   id="pawn-h-white" alt="" draggable="false"  />
                           </div>
                           <div class="square" name="h1">
-                              <img src="{% static 'Home/assets/images/pieces/white/rook.png' %}" alt="" draggable="false"  />
+                              <img src="{% static 'Home/assets/images/pieces/white/rook.png' %}" alt="" draggable="false" id="rook-h-white"  />
                           </div>
                         </div>
                     </div>
@@ -671,10 +671,18 @@
     <!-- Theme JS -->
     <script src="{% static 'Home/assets/js/theme.bundle.js' %}"></script>
     <!-- chess logic-->
+    <script src="{% static 'Home/assets/js/functions.js' %}"></script>
+    <script src="{% static 'Home/assets/js/pawn.js' %}"></script>
+    <script src="{% static 'Home/assets/js/rook.js' %}"></script>
+    <script src="{% static 'Home/assets/js/knight.js' %}"></script>
+    <script src="{% static 'Home/assets/js/bishop.js' %}"></script>
+    <script src="{% static 'Home/assets/js/king.js' %}"></script>
+    <script src="{% static 'Home/assets/js/queen.js' %}"></script>
     <script src="{% static 'Home/assets/js/chess.js' %}"></script>
-    <script src="{% static 'Home/assets/js/pieces.js' %}"></script>
-    
     <script src="{% static 'Home/assets/js/main.js' %}"></script>
+
+    
+
 </body>
 
 </html>

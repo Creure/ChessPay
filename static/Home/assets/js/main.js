@@ -1,5 +1,3 @@
-
-
 class Chess_Match extends Chess{
     constructor(){
         super()
