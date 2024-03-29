@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'MultiplayerOnline',
     'Authentication',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'Authentication.middleware.SessionTimeMiddleware.AuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'ChessPay.urls'
@@ -70,6 +72,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ChessPay.wsgi.application'
+ASGI_APPLICATION = 'ChessPay.asgi.application'
 
 
 # Database
@@ -123,7 +126,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Define la ubicación de tus archivos estáticos
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+#STATICFILES_DIRS = [os.path.join(BASE_DIR, 'staticfiles')]
 
 # Configuración para la recopilación de archivos estáticos en producción
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -135,3 +138,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 DEFAULT_PATH_CHESS_LOGS = '/Chess_Lobby/'
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ChessPay.settings')
