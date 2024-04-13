@@ -12,39 +12,58 @@ class Chess{
             [new pawn('black', 'a7'), new pawn('black', 'b7'), new pawn('black', 'c7'), new pawn('black', 'd7'), new pawn('black', 'e7'), new pawn('black', 'f7'), new pawn('black', 'g7'), new pawn('black', 'h7')],
             [new Rook('black', 'a8'), new Knight('black','b8'), new Bishop('black', 'c8'),  new Queen('black', 'd8'), new King('black', 'e8'), new Bishop('black', 'f8'),new Knight('black','g8'), new Rook('black', 'h8')] //7
           ];
+        this.id=''
 
-          this.turn = 'white'
-          this.pieces_dead_white = []
-          this.pieces_dead_black = []
-          this.position = {
-            'a': 0,'b': 1,'c': 2,'d': 3,'e': 4,'f': 5,'g': 6,'h': 7
-          };
-        
-        
-        
-          this.id_img_pieces = {
-            'pawn-a-white': 'a2','pawn-b-white': 'b2','pawn-c-white': 'c2','pawn-d-white': 'd2',
-            'pawn-e-white': 'e2','pawn-f-white': 'f2','pawn-g-white':  'g2', 'pawn-h-white': 'h2',
-            'rook-a-white': 'a1', 'rook-h-white':'h1', 'knight-b-white': 'b1','knight-g-white': 'g1',
-            'bishop-c-white': 'c1','bishop-f-white': 'f1', 'queen-d-white':'d1', 'king-e-white': 'e1',
-
-            'pawn-a-black': 'a7','pawn-b-black': 'b7','pawn-c-black': 'c7','pawn-d-black': 'd7',
-            'pawn-e-black': 'e7','pawn-f-black': 'f7','pawn-g-black':  'g7', 'pawn-h-black': 'h7',
-            'rook-a-black': 'a8', 'rook-h-black':'h8', 'knight-b-black': 'b8','knight-g-black': 'g8',
-            'bishop-c-black': 'c8','bishop-f-black': 'f8', 'queen-d-black':'d8', 'king-e-black': 'e8'
-
-
-
-            
-        
+        this.turn = 'white'
+        this.pieces_dead_white = []
+        this.pieces_dead_black = []
+        this.position = {
+        'a': 0,'b': 1,'c': 2,'d': 3,'e': 4,'f': 5,'g': 6,'h': 7
         };
         
-        this.data_pieces = Object.entries(this.id_img_pieces);
         
+
+        if(this.id = 'dc724af18fbdd4e59189f5fe768a5f8311527050d9b8a52c989f6e7f085e8b90'){
+
+            this.id_img_pieces = {
+                'pawn-a-white': 'a2','pawn-b-white': 'b2','pawn-c-white': 'c2','pawn-d-white': 'd2',
+                'pawn-e-white': 'e2','pawn-f-white': 'f2','pawn-g-white':  'g2', 'pawn-h-white': 'h2',
+                'rook-a-white': 'a1', 'rook-h-white':'h1', 'knight-b-white': 'b1','knight-g-white': 'g1',
+                'bishop-c-white': 'c1','bishop-f-white': 'f1', 'queen-d-white':'d1', 'king-e-white': 'e1',
+            }
+
+        }else if(this.id = '32523caacfbc25d536b7e7ccbc7e3e97baf4b9e38fc43d229de3da54c36e7a4b'){
+            this.id_img_pieces = {
+                'pawn-a-black': 'a7','pawn-b-black': 'b7','pawn-c-black': 'c7','pawn-d-black': 'd7',
+                'pawn-e-black': 'e7','pawn-f-black': 'f7','pawn-g-black':  'g7', 'pawn-h-black': 'h7',
+                'rook-a-black': 'a8', 'rook-h-black':'h8', 'knight-b-black': 'b8','knight-g-black': 'g8',
+                'bishop-c-black': 'c8','bishop-f-black': 'f8', 'queen-d-black':'d8', 'king-e-black': 'e8'
+            }
+        }
+        this.data_pieces = Object.entries(this.id_img_pieces);
 
     }
    
-    
+    send_data(position, pieceName, piece_color,move,movements,kill,piece){
+        
+        var data = {
+            'type': 'match',
+            'position': position,
+            'piece_eve_move':piece.eve_move,
+            'piece_name': pieceName,
+            'piece_color':piece_color,
+            'move': move,
+            'movements':movements,
+            'kill': kill,
+            'board':this.ChessBoard,
+            'turn': this.turn,
+            'pieces_dead_white':this.pieces_dead_white,
+            'pieces_dead_black':this.pieces_dead_black
+
+        };
+        socket.send(JSON.stringify({ 'data': data}));
+        
+    }
     
     
     clearIndicator(){
@@ -97,6 +116,7 @@ class Chess{
             var row1 = parseInt(move[1]) - 1// convert a2 == 0,1
 
             var position_piece = piece.position
+
             var piece_row0 = this.position[position_piece[0]] 
             var piece_row1 = parseInt(position_piece[1]) - 1// convert a2 == 0,1
 
@@ -109,7 +129,11 @@ class Chess{
             // moving img in the board
             var id_img = this.ChessBoard[row1][row0].piece + '-' +this.ChessBoard[row1][row0].row + '-' + this.ChessBoard[row1][row0].color
             var img = document.querySelector('#' + id_img); // pawn-g-black
-            var div_square = document.querySelector('[name="' + position_piece + '"]').removeChild(img) // error when there isn't images
+            try {
+                var div_square = document.querySelector('[name="' + position_piece + '"]').removeChild(img)
+            }catch (error){
+                 // there isn't img
+            } // error when there isn't images
             var div_square_moveTo = document.querySelector('[name="' + move + '"]'); 
             // fixing bugs the img doesn't update the event listener  // 
             
@@ -143,9 +167,13 @@ class Chess{
 
             // we needs to remove any img indicator in move box
             this.clearIndicator()
+            //send the move and information to server before to changes the turn
+            this.send_data(position_piece, piece.piece, piece.color,move,movements,true, piece)
 
             // changes the turn
             this.changesturn()
+
+            
 
             
         }
@@ -158,6 +186,8 @@ class Chess{
     move_the_pieces(piece, move, movements){
 
         //check if move is allowed move
+        console.log('debug:',movements, move)
+
         if (movements.includes(move)){
             // moving the object in the matrix
             var row0 = this.position[move[0]] 
@@ -179,8 +209,12 @@ class Chess{
             
             // moving img in the board
             var id_img = this.ChessBoard[row1][row0].piece + '-' +this.ChessBoard[row1][row0].row + '-' + this.ChessBoard[row1][row0].color
+            
             var img = document.querySelector('#' + id_img); // pawn-g-black
-            var div_square = document.querySelector('[name="' + position_piece + '"]').removeChild(img) // // error when there isn't images7
+            
+            console.log('position_piece: ', position_piece)
+            var div_square = document.querySelector('[name="' + position_piece + '"]').removeChild(img)
+            
             var div_square_moveTo = document.querySelector('[name="' + move + '"]'); 
             // fixing bugs the img doesn't update the event listener  // 
             img = img.cloneNode(true);
@@ -203,16 +237,15 @@ class Chess{
 
             // we needs to remove any img indicator in move box
             this.clearIndicator()
-
+            //send the move and information to server before to changes the turn
+            this.send_data(position_piece, piece.piece, piece.color,move, movements,false, piece)
             // changes the turn
             this.changesturn()
+            
 
             
         }
-        else{
-            // retorna e(rror if this else execute is because that move you select isn't available
-            console.log('Logic Error!')
-        }
+        
 
 
     }
@@ -227,7 +260,7 @@ class Chess{
         // Itera sobre todas las imágenes y elimínalas
         
             
-        movements.forEach(function(movement){
+        movements.forEach(function(movement){ //update movement var
             var query = 'div[name="' + movement + '"]'
             var box_div = document.querySelector(query);
 
@@ -256,6 +289,7 @@ class Chess{
                 enemy_piece.name = 'kill_indicator'
                 enemy_piece.addEventListener("click", function() {
                         chess_Match.kill_and_move_the_pieces(piece, movement, movements); 
+                        
                     }); 
                 
                 

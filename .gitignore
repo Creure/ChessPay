@@ -4,3 +4,4 @@
 /Virtual/
 db.sqlite3
 /VirtualChessPay/
+*.json

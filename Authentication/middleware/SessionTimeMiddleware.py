@@ -16,6 +16,7 @@ class AuthenticationMiddleware:
                         data.valid_session = False
                         data.save()
                         logout(request)
+                    
                 else:
                     request.session.pop('rT7gM2sP5qW8jN4'),
             except:
