@@ -209,13 +209,14 @@ class Chess{
             
             // moving img in the board
             var id_img = this.ChessBoard[row1][row0].piece + '-' +this.ChessBoard[row1][row0].row + '-' + this.ChessBoard[row1][row0].color
+            console.log('ID_IMG: ', id_img)
             
             var img = document.querySelector('#' + id_img); // pawn-g-black
             
-            console.log('position_piece: ', position_piece)
-            var div_square = document.querySelector('[name="' + position_piece + '"]').removeChild(img)
-            
+            //console.log('position_piece: ', position_piece)
+            var div_square = document.querySelector('[name="' + position_piece + '"]').removeChild(img) //removechild returns an error when img doesn't exist or ID is incorrect
             var div_square_moveTo = document.querySelector('[name="' + move + '"]'); 
+            
             // fixing bugs the img doesn't update the event listener  // 
             img = img.cloneNode(true);
             img.addEventListener("click", function() {

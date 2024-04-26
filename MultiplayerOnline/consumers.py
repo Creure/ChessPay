@@ -17,10 +17,12 @@ class ChessBoardCustomer(WebsocketConsumer):
         self.session = self.scope['session']
 
         if self.scope["user"].is_authenticated: 
-            print(self.scope.get('rT7gM2sP5qW8jN4'))
+            #print(self.scope.get('rT7gM2sP5qW8jN4'))
             if True:
                 data = AuthenticationTokenTime.objects.get(pk=self.session.get('rT7gM2sP5qW8jN4'))
                 if data.valid_session: # Match token I need to add here
+                    logging.debug(f'TOKEN: {data.username} ; {data.token_auth}')
+                    self.channel_name = f"{data.username}_{self.session.get('rT7gM2sP5qW8jN4')[0:50]}"
                      #verify credentials before to accept the coneection 
                     match_info = {
                         'ID_match':'',
@@ -54,7 +56,7 @@ class ChessBoardCustomer(WebsocketConsumer):
                         self.group_name,
                         self.channel_name
                     )
-                    
+                    print(self.channel_name)
                     self.send(text_data=json.dumps({'message': 'OK'}))  
             #except Exception as e:
             #   self.send(text_data=json.dumps({'message': str(e)})  ) #debug change this
@@ -67,6 +69,8 @@ class ChessBoardCustomer(WebsocketConsumer):
         
     def disconnect(self, close_code):
         # Disconnect the client from the group
+        logging.error(close_code)
+
         try:
             async_to_sync(self.channel_layer.group_discard)(
             self.group_name,
@@ -94,16 +98,22 @@ class ChessBoardCustomer(WebsocketConsumer):
         # Send a message to the client
         data = event['message']
         # Send the JSON message to the client via WebSocket
-
+        print(self.scope['user'])
         if 'type' in data:
-            print(data['turn'])
-            if data['turn'] == 'white':
-                data['response'] = '32523caacfbc25d536b7e7ccbc7e3e97baf4b9e38fc43d229de3da54c36e7a4b'
-            else:
-                data['response'] = 'dc724af18fbdd4e59189f5fe768a5f8311527050d9b8a52c989f6e7f085e8b90'
-        if 'response' in data:
-                logging.debug(data)
+            if data['type'] == 'match':
+                print(data['turn'])
+                logging.error(data)
+                if data['turn'] == 'white':
+                    data['response'] = '32523caacfbc25d536b7e7ccbc7e3e97baf4b9e38fc43d229de3da54c36e7a4b'
+                elif data['turn'] == 'black':
+                    data['response'] = 'dc724af18fbdd4e59189f5fe768a5f8311527050d9b8a52c989f6e7f085e8b90'
+                else:
+                    pass
+            logging.debug(data)
 
-        self.send(text_data=json.dumps({
-            'message': data
-        }))
+            self.send(text_data=json.dumps({
+                'message': data
+            }))
+
+
+    
