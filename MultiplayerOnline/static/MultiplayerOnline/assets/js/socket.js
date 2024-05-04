@@ -16,7 +16,7 @@ socket = new WebSocket('ws://localhost:8000/ws/Room/');
 
 socket.onopen = function(event) {
     console.log('WebSocket connection opened:', event);
-    socket.send(JSON.stringify({ 'data': '__init__'}));
+    socket.send(JSON.stringify({ 'data': {'sender':'cookie', 'data':'_init__'}}));
     
 
 };

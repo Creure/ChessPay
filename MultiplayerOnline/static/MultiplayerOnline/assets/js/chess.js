@@ -58,8 +58,8 @@ class Chess{
             'board':this.ChessBoard,
             'turn': this.turn,
             'pieces_dead_white':this.pieces_dead_white,
-            'pieces_dead_black':this.pieces_dead_black
-
+            'pieces_dead_black':this.pieces_dead_black,
+            'sender': this.cookie
         };
         socket.send(JSON.stringify({ 'data': data}));
         

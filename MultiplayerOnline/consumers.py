@@ -6,8 +6,9 @@ import json
 from channels.layers import get_channel_layer
 from django.conf import settings
 import logging
+from MultiplayerOnline.models import ChessGame, ChessLobbies
 
-logging.basicConfig(filename='Chess_Lobbies/debug.log',level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s: ')
+logging.basicConfig(filename='debug.log',level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s: ')
 
 class ChessBoardCustomer(WebsocketConsumer):
     
@@ -21,48 +22,30 @@ class ChessBoardCustomer(WebsocketConsumer):
             if True:
                 data = AuthenticationTokenTime.objects.get(pk=self.session.get('rT7gM2sP5qW8jN4'))
                 if data.valid_session: # Match token I need to add here
-                    logging.debug(f'TOKEN: {data.username} ; {data.token_auth}')
-                    self.channel_name = f"{data.username}_{self.session.get('rT7gM2sP5qW8jN4')[0:50]}"
-                     #verify credentials before to accept the coneection 
-                    match_info = {
-                        'ID_match':'',
-                        'white': '',
-                        'black': '',
-                        'move':'',
-                    }
-
-                    if not path.exists('Chess_Lobbies/lobby1/match.json'):
-                        with open('Chess_Lobbies/lobby1/match.json', 'w') as match:
-                            match_info['white'] = data.username
-                            match_info['ID_match'] = '253434'
-                            rw =  json.dump(match_info, match)
-                            self.group_name = match_info['ID_match']
+                    id_match = self.session.get('chess_match')
+                    self.group_name = id_match
+                    lobby = ChessLobbies.objects.filter(id=id_match).first()
+                    if lobby.game_data['white'][0] == self.session.get('rT7gM2sP5qW8jN4'):
+                        self.channel_name = id_match +'_'+  lobby.game_data['white'][0][0:50]
+                    elif lobby.game_data['black'][0] == self.session.get('rT7gM2sP5qW8jN4'):
+                        self.channel_name = id_match +'_'+lobby.game_data['white'][0][0:50]
                     else:
-                        with open('Chess_Lobbies/lobby1/match.json', 'r+') as match:
-                            rw = json.load(match)
-                            if rw['white'] == '':
-                                rw['white'] = data.username
-                                rw['ID_match'] = '253434'
-                            else:
-                                rw['black'] = data.username
-                            self.group_name = rw['ID_match']
-
-                        with open('Chess_Lobbies/lobby1/match.json', 'w') as match_update:
-                            json.dump(rw, match_update)
-                                
-
+                        pass
+                     #verify credentials before to accept the coneection 
+                   
                       # Replace 'group_name' with the name of your group
                     async_to_sync(self.channel_layer.group_add)(
                         self.group_name,
                         self.channel_name
                     )
-                    print(self.channel_name)
+                
                     self.send(text_data=json.dumps({'message': 'OK'}))  
             #except Exception as e:
             #   self.send(text_data=json.dumps({'message': str(e)})  ) #debug change this
                #debugging the error          
         else:
             self.send(text_data=json.dumps({'message': 'Not Auth'})) 
+            self.close()
 
             
        
@@ -84,6 +67,16 @@ class ChessBoardCustomer(WebsocketConsumer):
         # Parse the received JSON message
         data = json.loads(text_data)
         message = data['data']
+        logging.debug(f'WARNING: !!{message}')
+        id_match = self.session.get('chess_match')
+        lobby = ChessLobbies.objects.filter(id=id_match).first()
+        if message['sender'] == lobby.game_data['black'][0]:
+            msg_id_receiver = id_match +'_'+  lobby.game_data['white'][0][0:50]
+        elif message['sender'] == lobby.game_data['white'][0]:
+            msg_id_receiver = id_match +'_'+lobby.game_data['black'][0][0:50]
+        else:
+            pass
+
 
         # Send the message to all clients in the group
         async_to_sync(self.channel_layer.group_send)(
