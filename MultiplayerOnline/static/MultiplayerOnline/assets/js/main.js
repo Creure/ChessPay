@@ -1,7 +1,7 @@
 class Chess_Match extends Chess{
     constructor(id, cookie){
-        super()
-        this.id = id
+        super(id)
+        
         this.cookie = cookie
         this.data_pieces.forEach(([key,  value]) => {
             var imagen = document.getElementById(key);
@@ -14,6 +14,7 @@ class Chess_Match extends Chess{
         });
     }
 }
+
 
 
 chess_Match = new Chess_Match(id, cookie);

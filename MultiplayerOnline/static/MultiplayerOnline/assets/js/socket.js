@@ -16,7 +16,7 @@ socket = new WebSocket('ws://localhost:8000/ws/Room/');
 
 socket.onopen = function(event) {
     console.log('WebSocket connection opened:', event);
-    socket.send(JSON.stringify({ 'data': {'sender':'cookie', 'data':'_init__'}}));
+    socket.send(JSON.stringify({ 'data': {'sender':chess_Match.cookie, 'data':'_init__'}}));
     
 
 };
@@ -32,8 +32,8 @@ socket.onmessage = function(event) {
         return true
     }
     
-    if (eventData['message']['response'] == id){
-
+    if (eventData['message']['turn'] == chess_Match.turn){
+        console.log('se esta ejecutando el if')
         if(eventData['message']['type'] == 'match'){
         var color = eventData.message.piece_color;
         var position = eventData.message.position;

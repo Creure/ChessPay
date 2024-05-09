@@ -31,7 +31,7 @@ def CreateMatch(request):
     if available_lobby:
         available_lobby.black_player = player_username
         available_lobby.game_status = 'completed'
-        available_lobby.game_data['black'] = [request.session['rT7gM2sP5qW8jN4'], player_username, '32523caacfbc25d536b7e7ccbc7e3e97baf4b9e38fc43d229de3da54c36e7a4b']
+        available_lobby.game_data['black'] = [request.session['rT7gM2sP5qW8jN4'], player_username, 'black']
         
         available_lobby.save()
         return JsonResponse({'id': available_lobby.id, 'game_status': available_lobby.game_status})
@@ -44,7 +44,7 @@ def CreateMatch(request):
 
         json_data = {
             'ID_Room': str(new_lobby.id),
-            "white": [request.session['rT7gM2sP5qW8jN4'], player_username, 'dc724af18fbdd4e59189f5fe768a5f8311527050d9b8a52c989f6e7f085e8b90'],
+            "white": [request.session['rT7gM2sP5qW8jN4'], player_username, 'white'],
             "black": [],
             'move': [],
         }
@@ -57,10 +57,11 @@ def CreateMatch(request):
 def chess(request, ID):
 
     lobby = ChessLobbies.objects.filter(id=ID).first()
-    
-    request.session['chess_match'] = ID
-    if request.session['username'] == lobby.game_data['white'][1]:
 
+
+    request.session['chess_match'] = ID
+
+    if request.session['username'] == lobby.game_data['white'][1]:
         return render(request, 'chess.html', {'id': lobby.game_data['white'][2], 'cookie': request.session['rT7gM2sP5qW8jN4'] })
     elif request.session['username'] == lobby.game_data['black'][1]:
         return render(request, 'chess.html', {'id': lobby.game_data['black'][2], 'cookie': request.session['rT7gM2sP5qW8jN4'] }) 

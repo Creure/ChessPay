@@ -26,7 +26,6 @@ class King{
 		for (let deltaX = -1; deltaX <= 1; deltaX++) {
 			for (let deltaY = -1; deltaY <= 1; deltaY++) {
 				var move = String.fromCharCode(97 + column + deltaX) + (row + deltaY + 1)
-				console.log(move)			
 				if(move != position){
 					if (column + deltaX >= 0 && column + deltaX <= 7 && row + deltaY >= 0 && row + deltaY <= 7) {
 					// Add the valid move to the list of available moves

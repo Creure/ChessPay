@@ -10,7 +10,7 @@ class ChessLobbies(models.Model):
     game_status = models.CharField(max_length=20, default='pending')
     game_data = models.JSONField(default=dict)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    this_chessboard = models.JSONField(default=dict)
     def __str__(self):
         return f"Chess Lobby {self.id}"
 
