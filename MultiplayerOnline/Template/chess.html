@@ -158,7 +158,12 @@
                                         <picture class="avatar-group-img" data-bs-toggle="tooltip" data-bs-placement="top" title="Patty Smith">
                                             <img class="f-w-10 rounded-circle" src="{%static 'MultiplayerOnline/assets/images/profile-small-6.jpeg'%}" alt="" draggable="false" >
                                          </picture>
-                                         Player #1 
+                                         {% if id == 'white' %}
+                                            <p>{{ players.black }}</p>
+                                        {% else %}
+                                            <p>{{ players.white }}</p>
+                                      
+                                        {% endif %}
                                 </td>
                                     <td>
                                         <div class="d-flex align-items-center">
@@ -222,7 +227,12 @@
                                                 <picture class="avatar-group-img" data-bs-toggle="tooltip" data-bs-placement="top" title="Patty Smith">
                                                     <img class="f-w-10 rounded-circle" src="{%static 'MultiplayerOnline/assets/images/profile-small-6.jpeg'%}" alt="" draggable="false" >
                                                  </picture>
-                                                 Player #1 
+                                                 {% if id == 'white' %}
+                                                      <p>{{ players.white }}</p>
+                                                {% else %}
+                                                      <p>{{ players.black }}</p>
+                                                
+                                                {% endif %}
                                         </td>
                                             <td>
                                                 <div class="d-flex align-items-center">
@@ -527,12 +537,6 @@
     <script src="{% static 'MultiplayerOnline/assets/js/theme.bundle.js' %}"></script>
     <!-- chess logic-->
     <script src="{% static 'MultiplayerOnline/assets/js/functions.js' %}"></script>
-    <script src="{% static 'MultiplayerOnline/assets/js/pawn.js' %}"></script>
-    <script src="{% static 'MultiplayerOnline/assets/js/rook.js' %}"></script>
-    <script src="{% static 'MultiplayerOnline/assets/js/knight.js' %}"></script>
-    <script src="{% static 'MultiplayerOnline/assets/js/bishop.js' %}"></script>
-    <script src="{% static 'MultiplayerOnline/assets/js/king.js' %}"></script>
-    <script src="{% static 'MultiplayerOnline/assets/js/queen.js' %}"></script>
     <script src="{% static 'MultiplayerOnline/assets/js/chess.js' %}"></script>
     <script src="{% static 'MultiplayerOnline/assets/js/main.js' %}"></script>
     <script src="{% static 'MultiplayerOnline/assets/js/socket.js' %}"></script>

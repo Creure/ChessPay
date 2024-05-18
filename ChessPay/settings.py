@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-3-b)ttk&gzmk2=1*v-vg6*)cw-1jb-0))*1pq7f@#0nt0qd)wi
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 LOGIN_URL = '/login/'
 
@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'MultiplayerOnline',
     'Authentication',
-    
+    'chess',
 ]
 
 MIDDLEWARE = [

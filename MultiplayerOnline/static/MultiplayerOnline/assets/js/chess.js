@@ -2,27 +2,15 @@
 class Chess{
 
     constructor(id){
-        this.ChessBoard = [
-            [new Rook('white', 'a1'), new Knight('white','b1'), new Bishop('white', 'c1'), new Queen('white', 'd1'), new King('white', 'e1'), new Bishop('white', 'f1'), new Knight('white','g1'), new Rook('white', 'h1')], //0
-            [new pawn('white', 'a2'), new pawn('white', 'b2'), new pawn('white', 'c2'), new pawn('white', 'd2'), new pawn('white', 'e2'), new pawn('white', 'f2'), new pawn('white', 'g2'), new pawn('white', 'h2')],
-            ['-', '-', '-', '-', '-', '-', '-', '-'],
-            ['-', '-', '-', '-', '-', '-', '-', '-'],
-            ['-', '-', '-', '-', '-', '-', '-', '-'],
-            ['-', '-', '-', '-', '-', '-', '-', '-'],
-            [new pawn('black', 'a7'), new pawn('black', 'b7'), new pawn('black', 'c7'), new pawn('black', 'd7'), new pawn('black', 'e7'), new pawn('black', 'f7'), new pawn('black', 'g7'), new pawn('black', 'h7')],
-            [new Rook('black', 'a8'), new Knight('black','b8'), new Bishop('black', 'c8'),  new Queen('black', 'd8'), new King('black', 'e8'), new Bishop('black', 'f8'),new Knight('black','g8'), new Rook('black', 'h8')] //7
-          ];
+        
         this.id=id
 
-        this.turn = 'white'
-        this.pieces_dead_white = []
-        this.pieces_dead_black = []
-        this.position = {
-        'a': 0,'b': 1,'c': 2,'d': 3,'e': 4,'f': 5,'g': 6,'h': 7
-        };
         
         
-
+       
+        
+        
+        this.turn = 'white';
         if(this.id == 'white'){
 
             this.id_img_pieces = {
@@ -43,27 +31,7 @@ class Chess{
         this.data_pieces = Object.entries(this.id_img_pieces);
 
     }
-   
-    send_data(position, pieceName, piece_color,move,movements,kill,piece){
-        
-        var data = {
-            'type': 'match',
-            'position': position,
-            'piece_eve_move':piece.eve_move,
-            'piece_name': pieceName,
-            'piece_color':piece_color,
-            'move': move,
-            'movements':movements,
-            'kill': kill,
-            'board':this.ChessBoard,
-            'turn': this.turn,
-            'pieces_dead_white':this.pieces_dead_white,
-            'pieces_dead_black':this.pieces_dead_black,
-            'sender': this.cookie
-        };
-        socket.send(JSON.stringify({ 'data': data}));
-        
-    }
+
     
     
     clearIndicator(){
@@ -91,203 +59,90 @@ class Chess{
 
     }
 
-    changesturn(){
-        if(this.turn === 'white'){
-            
-            this.turn = 'black' 
-        }
-        else{
-            this.turn = 'white'
-        }
+
+    ask_for_legal_moves(box,img_id){
+        socket.send(JSON.stringify({'data':{'type': 'legal_moves', 'position':box, 'img_id': img_id}}));
+
     }
 
+    send_the_selected_move(move, position, img_id){
+        socket.send(JSON.stringify({'data':{'type': 'do_the_move', 'move':move, 'position': position, 'img_id':img_id}}));
+        this.clearIndicator()
+
+    }
+
+
+
+
+    move_the_pieces(move, position, img_id, remove){
+        
+        var divA2 = document.querySelector('div[name="'+move+'"]');
+        var img = divA2.querySelector('img');
+        if (img) {
+            img.parentNode.removeChild(img);
+        }
+
+        
+        
+        var img = document.querySelector('#' + img_id); // pawn-g-black
+        
+        //console.log('position_piece: ', position_piece)
+        var div_square = document.querySelector('[name="' + position + '"]').removeChild(img) //removechild returns an error when img doesn't exist or ID is incorrect
+        var div_square_moveTo = document.querySelector('[name="' + move + '"]'); 
+        
+        // fixing bugs the img doesn't update the event listener  // 
+        img = img.cloneNode(true);
+        img.addEventListener("click", function() {
+            
+            chess_Match.ask_for_legal_moves(move, img_id); 
+            //console.log(value)
+        }); 
+        // ending
+        if (img && div_square_moveTo){
+            
+            div_square_moveTo.appendChild(img)
+            
+        } else {
+            console.log("Alguno de los elementos no se encontró.");
+        }
+
+        //updating the location in dict 'this.id_img_pieces'
+        
+
+        // we needs to remove any img indicator in move box
+        this.clearIndicator()
+            
+        
+
+        
+    
     
 
-    kill_and_move_the_pieces(piece, move, movements){ // piece is teammate piece //box_div has the div where is enemy piece img
-        try{
-            var enemy_piece_rows = changes_location_to_matrix(move)
-            var enemy_piece = this.ChessBoard[enemy_piece_rows[1]][enemy_piece_rows[0]]
-            if (movements.includes(move)){
-                // moving the object in the matrix
-                var box_div = document.querySelector('div[name="' + move + '"]');
-                
-                
-                var row0 = this.position[move[0]] 
-                var row1 = parseInt(move[1]) - 1// convert a2 == 0,1
-
-                var position_piece = piece.position
-
-                var piece_row0 = this.position[position_piece[0]] 
-                var piece_row1 = parseInt(position_piece[1]) - 1// convert a2 == 0,1
-
-                var obj = this.ChessBoard[piece_row1][piece_row0]
-                this.ChessBoard[piece_row1][piece_row0] = '-'
-                this.ChessBoard[row1][row0] = obj
-                // updating the location- in the object
-                
-                
-                // moving img in the board
-                var id_img = this.ChessBoard[row1][row0].piece + '-' +this.ChessBoard[row1][row0].row + '-' + this.ChessBoard[row1][row0].color
-                var img = document.querySelector('#' + id_img); // pawn-g-black
-                try {
-                    var div_square = document.querySelector('[name="' + position_piece + '"]').removeChild(img)
-                }catch (error){
-                    // there isn't img
-                } // error when there isn't images
-                var div_square_moveTo = document.querySelector('[name="' + move + '"]'); 
-                // fixing bugs the img doesn't update the event listener  // 
-                
-                box_div.removeChild(box_div.querySelector('img')); // here deleted all img in this 
-                
-                img.addEventListener("click", function() {
-                    
-                    chess_Match.show_allowed_move(move); 
-                    //console.log(value)
-                }); 
-                // ending
-                if (img && div_square_moveTo){
-                    div_square_moveTo.appendChild(img)
-                    this.ChessBoard[row1][row0].position = move
-                    if (box_div) {
-                        // Busca la imagen dentro del div
-                        
-                            
-                            if(enemy_piece.color == 'black'){
-                                this.pieces_dead_black.push(enemy_piece)
-                            }else{
-                                this.pieces_dead_white.push(enemy_piece)
-                            }
-                        }
-                } else {
-                    console.log("Alguno de los elementos no se encontró.");
-                }
-
-                //updating the location in dict 'this.id_img_pieces'
-                this.id_img_pieces[id_img] = move
-
-                // we needs to remove any img indicator in move box
-                this.clearIndicator()
-                //send the move and information to server before to changes the turn
-                this.send_data(position_piece, piece.piece, piece.color,move,movements,true, piece)
-
-                // changes the turn
-                this.changesturn()
-
-                
-
-                
-            }   
-        }catch{
-
-            
-        }
-    }
-
-    move_the_pieces(piece, move, movements){
-
-        //check if move is allowed move
-        console.log('debug:',movements, move)
-
-        try{
-            if (movements.includes(move)){
-                // moving the object in the matrix
-                var row0 = this.position[move[0]] 
-                var row1 = parseInt(move[1]) - 1// convert a2 == 0,1
-
-                var position_piece = piece.position
-                var piece_row0 = this.position[position_piece[0]] 
-                var piece_row1 = parseInt(position_piece[1]) - 1// convert a2 == 0,1
-
-                var obj = this.ChessBoard[piece_row1][piece_row0]
-                this.ChessBoard[piece_row1][piece_row0] = '-'
-                this.ChessBoard[row1][row0] = obj
-                // updating the location- in the object
-                
-                // updating the eve_move
-                if (this.ChessBoard[row1][row0].piece == 'pawn'){
-                    this.ChessBoard[row1][row0].eve_move = true
-                }
-                
-                // moving img in the board
-                var id_img = this.ChessBoard[row1][row0].piece + '-' +this.ChessBoard[row1][row0].row + '-' + this.ChessBoard[row1][row0].color
-                console.log('ID_IMG: ', id_img)
-                
-                var img = document.querySelector('#' + id_img); // pawn-g-black
-                
-                //console.log('position_piece: ', position_piece)
-                var div_square = document.querySelector('[name="' + position_piece + '"]').removeChild(img) //removechild returns an error when img doesn't exist or ID is incorrect
-                var div_square_moveTo = document.querySelector('[name="' + move + '"]'); 
-                
-                // fixing bugs the img doesn't update the event listener  // 
-                img = img.cloneNode(true);
-                img.addEventListener("click", function() {
-                    
-                    chess_Match.show_allowed_move(move); 
-                    //console.log(value)
-                }); 
-                // ending
-                if (img && div_square_moveTo){
-                    
-                    div_square_moveTo.appendChild(img)
-                    this.ChessBoard[row1][row0].position = move
-                } else {
-                    console.log("Alguno de los elementos no se encontró.");
-                }
-
-                //updating the location in dict 'this.id_img_pieces'
-                this.id_img_pieces[id_img] = move
-
-                // we needs to remove any img indicator in move box
-                this.clearIndicator()
-                //send the move and information to server before to changes the turn
-                this.send_data(position_piece, piece.piece, piece.color,move, movements,false, piece)
-                // changes the turn
-                this.changesturn()
-                
-
-                
-            }
-            
-        }catch{
-        
-        }
 
     }
 
-    show_allowed_move(box){ // here we show the allows move in the board
-        
-        
+   
 
-        var row0 = this.position[box[0]];
-        var row1 = parseInt(box[1]) - 1// conve'rt a2 == 0,1
-        var piece = this.ChessBoard[row1][row0]; // make sure 'piece' is a object 
+    show_allowed_move(movements, position, img_id){ // here we show the allows move in the board
         
-        if(this.id != piece.color){
-            return []
-        }
-        
-        var movements = piece.allows_basic_move();
-        console.log("box: " + box)
         this.clearIndicator()
-        
-        
-            
         movements.forEach(function(movement){ //update movement var
-            var query = 'div[name="' + movement + '"]'
+            var move  = movement.substring(movement.length - 2);
+            var query = 'div[name="' + move + '"]'
             var box_div = document.querySelector(query);
-
+            
             
             if(box_div.children.length === 0 ){
                 // this condition avoid create indicator img object on piece
                 const imgElement = document.createElement('img');
                 imgElement.src = "/static/MultiplayerOnline/assets/images/pieces/element/indicator.png";
                 imgElement.setAttribute('name', 'indicator');
-                imgElement.setAttribute('id', 'move_' + movement);
+                imgElement.setAttribute('id', 'move_' + move);
                 imgElement.setAttribute("draggable","false")
                 box_div.appendChild(imgElement);
                 
                 imgElement.addEventListener("click", function() {
-                    chess_Match.move_the_pieces(piece, movement, movements); 
+                    chess_Match.send_the_selected_move(movement, position, img_id); 
                 }); 
                 
 
@@ -300,7 +155,7 @@ class Chess{
                 enemy_piece.classList.add('img_piece_alert')
                 enemy_piece.name = 'kill_indicator'
                 enemy_piece.addEventListener("click", function() {
-                        chess_Match.kill_and_move_the_pieces(piece, movement, movements); 
+                        chess_Match.send_the_selected_move(movement, position, img_id); 
                         
                     }); 
                 
@@ -309,7 +164,9 @@ class Chess{
         });
     }
 
-
+    check_mate(){
+        alert('CHECK MATE!!')
+    }
     
 }
 

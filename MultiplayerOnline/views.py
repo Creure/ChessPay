@@ -6,8 +6,9 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse    
 import logging
 from django.db.models import Q
-# Create your views here.
 
+# Create your views here.
+@login_required
 def home(request):
     return render(request, 'home.html')
 
@@ -53,17 +54,19 @@ def CreateMatch(request):
 
         return JsonResponse({'id': new_lobby.id, 'game_status': new_lobby.game_status})
 
-
+@login_required
 def chess(request, ID):
 
     lobby = ChessLobbies.objects.filter(id=ID).first()
 
 
     request.session['chess_match'] = ID
-
+    players = {
+        'white': lobby.game_data['white'][1], 'black': lobby.game_data['black'][1],
+    }
     if request.session['username'] == lobby.game_data['white'][1]:
-        return render(request, 'chess.html', {'id': lobby.game_data['white'][2], 'cookie': request.session['rT7gM2sP5qW8jN4'] })
+        return render(request, 'chess.html', {'id': lobby.game_data['white'][2], 'cookie': request.session['rT7gM2sP5qW8jN4'], 'players': players})
     elif request.session['username'] == lobby.game_data['black'][1]:
-        return render(request, 'chess.html', {'id': lobby.game_data['black'][2], 'cookie': request.session['rT7gM2sP5qW8jN4'] }) 
+        return render(request, 'chess.html', {'id': lobby.game_data['black'][2], 'cookie': request.session['rT7gM2sP5qW8jN4'], 'players': players }) 
     else:
         pass
