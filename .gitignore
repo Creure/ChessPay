@@ -6,4 +6,3 @@ db.sqlite3
 /VirtualChessPay/
 *.json
 *.log
-*.txt
