@@ -24,9 +24,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Overpass:wght@200;300;400;600&display=swap" rel="stylesheet">
-    {%if id == 'black'%}
-      <link rel="stylesheet" href="{% static 'MultiplayerOnline/assets/css/rotate.css'%}" />
-    {%endif%}
+    
     <!-- Vendor CSS -->
     <link rel="stylesheet" href="{% static 'MultiplayerOnline/assets/css/libs.bundle.css'%}" />
     <!-- board css-->
@@ -199,7 +197,12 @@
 
                 
                 <!-- board-->
-                {% include 'board.html'%}
+                {%if id == 'white'%}
+                  {% include 'board_white.html'%}
+                {%else%}
+                    {% include 'board_black.html'%}
+                {%endif%}
+                
                           
                 <!-- /board end-->
                 <!-- Sales Conversions Widget-->

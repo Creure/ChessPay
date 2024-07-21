@@ -15,19 +15,25 @@ def home(request):
 @login_required
 def CreateMatch(request):
 
-    player_username = request.session['username']
-    completed_lobby = ChessLobbies.objects.filter(
-    (Q(white_player=player_username) & Q(game_status='completed')) |
-    (Q(black_player=player_username) & Q(game_status='completed'))).first()
-    if completed_lobby:
-        return JsonResponse({'id': completed_lobby.id, 'game_status': completed_lobby.game_status})
-    
-    existing_lobby = ChessLobbies.objects.filter(white_player=player_username, game_status='waiting').first()
-   
-    if existing_lobby:
-        return JsonResponse({'id': existing_lobby.id, 'game_status': existing_lobby.game_status})
 
+    
+    player_username = request.session['username']
+    search_lobbies = ChessLobbies.objects.filter(
+        (
+            (Q(white_player=player_username) | Q(black_player=player_username)) &
+            Q(game_status__in=['completed', 'waiting', 'playing'])
+        )
+    ).first()
+    
+    
+    if search_lobbies:
+        return JsonResponse({'id': search_lobbies.id, 'game_status': search_lobbies.game_status})
+   
+
+    
+    
     available_lobby = ChessLobbies.objects.exclude(white_player=player_username).filter(game_status='waiting', black_player='').first()
+    playing_lobby = ChessLobbies.objects.exclude(white_player=player_username).filter(game_status='playing', black_player='').first()
 
     if available_lobby:
         available_lobby.black_player = player_username
@@ -37,6 +43,8 @@ def CreateMatch(request):
         available_lobby.save()
         return JsonResponse({'id': available_lobby.id, 'game_status': available_lobby.game_status})
 
+    elif playing_lobby:
+        return JsonResponse({'id': playing_lobby.id, 'game_status': playing_lobby.game_status}) 
     else:
         new_lobby = ChessLobbies.objects.create(
             white_player=player_username,
@@ -47,7 +55,7 @@ def CreateMatch(request):
             'ID_Room': str(new_lobby.id),
             "white": [request.session['rT7gM2sP5qW8jN4'], player_username, 'white'],
             "black": [],
-            'move': [],
+            
         }
         new_lobby.game_data = json_data
         new_lobby.save()

@@ -18,7 +18,7 @@ class ChessGame(models.Model):
     ChessLobbies_id = models.ForeignKey(ChessLobbies, on_delete=models.CASCADE, null=True)
     white_player = models.CharField(max_length=100)
     black_player = models.CharField(max_length=100)
-    game_status = models.CharField(max_length=20, default='pending')  # 'pending', 'cancel', 'finish'
+    game_status = models.CharField(max_length=20, default='pending')  # 'pending', 'cancel', 'Check Mate'
     move_history = models.JSONField(default=list)
     start_time = models.DateTimeField(auto_now_add=True)
     end_time = models.DateTimeField(null=True, blank=True)

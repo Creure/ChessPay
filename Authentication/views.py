@@ -5,7 +5,8 @@ from django.contrib.auth import logout
 from django.contrib.auth.views import LoginView
 from Authentication.models import AuthenticationTokenTime
 from django.utils import timezone
-import secrets
+
+
 
 def logout_view(request):
     logout(request)
@@ -24,18 +25,24 @@ class Authentication(View):
     
     def post(self, request):
         auth = authenticate(username=request.POST['id_username'], password=request.POST['id_password'])
-
+        
         if auth is not None:
             login(request, auth)
 
             try:
                 data = AuthenticationTokenTime.objects.get(username=request.POST['id_username'], valid_session=True)
-                token = data.token_auth
-            except AuthenticationTokenTime.DoesNotExist:
-                token = secrets.token_hex(256)
+                data.valid_session = False
+                data.save()
+                token = request.COOKIES.get('csrftoken', '')
+                request.session['rT7gM2sP5qW8jN4'] = token
                 AuthenticationTokenTime.objects.create(token_auth=token, username=request.POST['id_username'], last_login=timezone.now(), session_time=timezone.now() + timezone.timedelta(hours=24), valid_session=True, ip_address=request.META['REMOTE_ADDR'])
 
-            request.session['rT7gM2sP5qW8jN4'] = token
+            except AuthenticationTokenTime.DoesNotExist:
+                token = request.COOKIES.get('csrftoken', '')
+                request.session['rT7gM2sP5qW8jN4'] = token
+                AuthenticationTokenTime.objects.create(token_auth=token, username=request.POST['id_username'], last_login=timezone.now(), session_time=timezone.now() + timezone.timedelta(hours=24), valid_session=True, ip_address=request.META['REMOTE_ADDR'])
+                
+
             request.session['username'] = request.POST['id_username']
             return redirect('/')
         else:

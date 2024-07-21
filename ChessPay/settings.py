@@ -87,7 +87,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'ChessPay',
         'USER': 'postgres',  # Usuario por defecto
-        'PASSWORD': 'KuNfmjyMzvZthovXhWIBqcnmGrwbyZGKxPjPZyORvIYjWnlNvNLXeJXkLQWJopjFyeJUqMLBqgQhPkqkZrGmkxGKmGKpqGPhzlqHWcmLCcuxsHmsaMwFBffBCwGnzQuv',
+        'PASSWORD': 'b4eeb4abb918',
         'HOST': 'localhost',
         'PORT': '5432',
     }
