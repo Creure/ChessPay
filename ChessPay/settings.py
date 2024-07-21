@@ -25,19 +25,23 @@ SECRET_KEY = 'django-insecure-3-b)ttk&gzmk2=1*v-vg6*)cw-1jb-0))*1pq7f@#0nt0qd)wi
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
+LOGIN_URL = '/login/'
 
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'Home',
+    'MultiplayerOnline',
+    'Authentication',
+    'chess',
 ]
 
 MIDDLEWARE = [
@@ -48,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'Authentication.middleware.SessionTimeMiddleware.AuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'ChessPay.urls'
@@ -55,7 +60,7 @@ ROOT_URLCONF = 'ChessPay.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['Home/Template'],
+        'DIRS': ['MultiplayerOnline/Template', 'Authentication/Template'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -69,17 +74,25 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ChessPay.wsgi.application'
+ASGI_APPLICATION = 'ChessPay.asgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# settings.py
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ChessPay',
+        'USER': 'postgres',  # Usuario por defecto
+        'PASSWORD': 'b4eeb4abb918',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
 
 
 # Password validation
@@ -122,13 +135,24 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Define la ubicación de tus archivos estáticos
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+#STATICFILES_DIRS = [os.path.join(BASE_DIR, 'staticfiles')]
 
 # Configuración para la recopilación de archivos estáticos en producción
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('localhost', 6379)],
+        },
+    },
+}
