@@ -41,10 +41,9 @@ class Authentication(View):
                 token = request.COOKIES.get('csrftoken', '')
                 request.session['rT7gM2sP5qW8jN4'] = token
                 AuthenticationTokenTime.objects.create(token_auth=token, username=request.POST['id_username'], last_login=timezone.now(), session_time=timezone.now() + timezone.timedelta(hours=24), valid_session=True, ip_address=request.META['REMOTE_ADDR'])
-                
-
+            
             request.session['username'] = request.POST['id_username']
-            return redirect('/')
+            return redirect('/wallet/')
         else:
             return render(request, 'login.html', {'auth': request.user.is_authenticated})
 

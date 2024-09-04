@@ -7,7 +7,7 @@ from channels.layers import get_channel_layer
 from django.conf import settings
 import logging
 from django.shortcuts import get_object_or_404
-from MultiplayerOnline.models import ChessGame, ChessLobbies
+from MultiplayerOnline.models import ChessLobbies
 import chess, pdb
 
 logging.basicConfig(filename='debug.log',level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s: ')
@@ -53,7 +53,10 @@ class ChessBoardCustomer(WebsocketConsumer):
                         self.chess_match = {
                             self.scope['session'].get('chess_match'):chess.Board(self.match_query.this_chessboard['board_fen'])
                         }
-
+                    elif self.match_query.game_status == 'waiting':
+                        self.chess_match = {
+                            self.scope['session'].get('chess_match'):chess.Board()
+                        }
                     else:
                         self.close()
                     if self.chess_match[self.scope['session'].get('chess_match')].turn:
@@ -81,6 +84,9 @@ class ChessBoardCustomer(WebsocketConsumer):
     def disconnect(self, close_code):
         # Disconnect the client from the group
         self.group_name = 'Disconnecting'
+        if self.match_query.game_status == 'waiting':
+            self.match_query.delete()  
+
         try:
             async_to_sync(self.channel_layer.group_discard)(
             self.group_name,

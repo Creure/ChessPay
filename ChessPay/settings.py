@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'MultiplayerOnline',
     'Authentication',
     'chess',
+    'ChessCoin',
+    'UserInformationManager',
+    
 ]
 
 MIDDLEWARE = [
@@ -60,7 +63,7 @@ ROOT_URLCONF = 'ChessPay.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['MultiplayerOnline/Template', 'Authentication/Template'],
+        'DIRS': ['MultiplayerOnline/Template', 'Authentication/Template', ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -72,6 +75,7 @@ TEMPLATES = [
         },
     },
 ]
+AUTH_USER_MODEL = 'Authentication.User'
 
 WSGI_APPLICATION = 'ChessPay.wsgi.application'
 ASGI_APPLICATION = 'ChessPay.asgi.application'
@@ -156,3 +160,8 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+
+
+CLIENT_ID = "AYuP12zmJczMuV5SDX27rCdmwSPZYPkLkmkkYQKHWfCM6qNksTFWFcOPQNaoRlPl2cWEvZ6fuyXw4zgn"
+CLIENT_SECRET = 'EG028OjLYBFUHAeIDxueulMYvM4k9mObjEX1-YqQDj7gZzrfEEQTuNHp8EcXc-GOjF33HIKnuPFeVzzs'

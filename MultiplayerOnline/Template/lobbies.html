@@ -1,0 +1,168 @@
+
+{% load static%}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet" />
+    <script defer src="https://unpkg.com/alpinejs@3.2.2/dist/cdn.min.js"></script>
+    <title>{% block title %}Lobbies{% endblock %}</title>
+  
+    {%if chess%}
+        <link rel="stylesheet" href="{% static 'MultiplayerOnline/assets/css/board.css'%}" />
+
+    {%endif%}
+
+  
+
+    
+</head>
+<body class=" {% if user.user_profile.gui%}h-screen overflow-hidden flex items-center justify-cente{%endif%}r" style="background: #edf2f7;">
+
+
+
+    {% if user.user_profile.gui%}
+
+            {% include 'sections/Desktop/NavDesktop.html' %}
+        
+    {%else%}
+            
+            {% include 'sections/Android/NavAndroid.html' %}
+
+    {%endif%}
+
+    
+  
+ 
+{% block content %}
+<div>
+    <div class="w-full">
+            
+        {% if user.user_profile.gui%}
+
+                {% include 'sections/Desktop/DesktopTable.html' %}
+            
+        {%else%}
+                
+                {% include 'sections/Android/AndroidTable.html' %}
+
+
+        {%endif%}
+        
+        <div class="" id="table-large">
+        </div>
+        <div class="hidden" id="table-small">
+    
+        </div>
+            
+    
+        
+        
+
+
+        <div id="overlay" class="overlay">
+            <!-- Contenedor del formulario -->
+            <div id="formContainer" class="hidden font-manrope flex flex-col w-full max-w-md border bg-white p-4 rounded-lg">
+            <div class="flex items-center justify-between">
+                <span class="text-[#64748B]">Crear Lobby</span>
+                <div id="closeButton" class="cursor-pointer border rounded-[4px] p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#64748B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                </div>
+            </div>
+        
+            <div class="mt-6">
+                <div class="w-full max-w-xs mx-auto">
+                <div class="font-semibold">¿Cuánto deseas apostar en ChessCoin?</div>
+
+                    <div class="relative">
+                    <select id="betAmount" name="betAmount" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md">
+                        {% if user.wallet >= 1%}
+                        <option value="1.00">1,00</option>
+                        {% endif%}
+                        {% if user.wallet >= 10%}
+                        <option value="10.00">10,00</option>
+                        {%endif%}
+                        {% if user.wallet >= 50%}
+                        <option value="50.00">50,00</option>
+                        {%endif%}
+                        {% if user.wallet >= 100%}
+                        <option value="100.00">100,00</option>
+                        {%endif%}
+                        {% if user.wallet >= 150%}
+                        <option value="100.00">150,00</option>
+                        {%endif%}
+                        {% if user.wallet >= 200%}
+                        <option value="100.00">200,00</option>
+                        {%endif%}
+                    </select>
+
+                    <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 01.707.293l5 5a1 1 0 01-1.414 1.414L10 5.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5A1 1 0 0110 3z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    </div>
+                </div>
+                
+            </div>
+        
+            <div class="mt-6">
+                <div class="">Piece</div>
+                <div class="mt-2">
+                
+
+                    <div class="flex justify-center gap-4">
+                        <div id="whiteKing" class="bg-indigo-600 image-wrapper w-[60px] h-auto p-1 rounded cursor-pointer transition-all duration-200">
+                        <img src="/static/MultiplayerOnline/assets/images/pieces/white/king.png" alt="white King" class="w-full h-auto rounded">
+                        </div>
+                    
+                        <div id="blackKing" class="image-wrapper w-[60px] h-auto p-1 rounded cursor-pointer transition-all duration-200">
+                        <img src="/static/MultiplayerOnline/assets/images/pieces/black/king.png" alt="black King" class="w-full h-auto rounded">
+                        </div>
+                    </div>
+                    
+        
+            <div class="mt-6">
+                <div id='createlobby' class="w-full hover:bg-indigo-500 cursor-pointer rounded-[4px] bg-indigo-600 px-3 py-[6px] text-center font-semibold text-white">Crear Lobby</div>
+            </div>
+            </div>
+        </div>  
+
+        
+    </div>
+</div>
+{% endblock %}
+
+
+    
+<style>
+.checkbox:checked + .check-icon {
+display: flex;
+}</style>
+
+{%if lobbies%}
+    <script src="{% static 'MultiplayerOnline/assets/js/lobbies.js' %}"></script>
+    
+{%elif chess%}  
+<script>var id = '{{id}}';
+            var cookie = '{{cookie}}'</script>
+    <script src="{% static 'MultiplayerOnline/assets/js/vendor.bundle.js' %}"></script>
+   
+    <script src="{% static 'MultiplayerOnline/assets/js/theme.bundle.js' %}"></script>
+    <script src="{% static 'MultiplayerOnline/assets/js/functions.js' %}"></script>
+    <script src="{% static 'MultiplayerOnline/assets/js/chess.js' %}"></script>
+    <script src="{% static 'MultiplayerOnline/assets/js/main.js' %}"></script>
+    <script src="{% static 'MultiplayerOnline/assets/js/socket.js' %}"></script> 
+{%endif%}
+
+
+
+
+</body>
+
+</html>

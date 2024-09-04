@@ -6,5 +6,7 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('MultiplayerOnline.urls')),
-    path('', include('Authentication.urls'))
+    path('', include('Authentication.urls')),
+    path('', include('ChessCoin.urls')),
+    path('', include('UserInformationManager.urls'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

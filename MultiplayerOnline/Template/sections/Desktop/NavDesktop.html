@@ -1,0 +1,169 @@
+<div class="w-64 bg-white h-screen shadow-md fixed top-0 left-0">
+    <div class="flex flex-col h-full">
+        <!-- Logo o Título -->
+        <div class="p-4 text-center text-2xl font-bold text-gray-800 border-b">
+            ChessPay Menu
+        </div>
+
+        <!-- Opciones del menú -->
+        <div class="flex-1 p-4">
+            <ul class="space-y-4">
+                <!-- Items del menú -->
+                <li>
+                    <a href="/1/" class="flex items-center p-2 hover:text-white hover:bg-indigo-600 rounded-md {%if lobbies %}bg-indigo-600 text-white{%endif%}">
+                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
+                        Lobbies
+                    </a>
+                </li>
+                <li>
+                    <a href="/wallet/" class="flex items-center p-2 hover:text-white hover:bg-indigo-600 rounded-md {%if wallet%}bg-indigo-600 text-white{%endif%}">
+                        <svg class="h-8 w-8 text-black-500" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z"/>
+                            <path d="M17 8v-3a1 1 0 0 0 -1 -1h-10a2 2 0 0 0 0 4h12a1 1 0 0 1 1 1v3m0 4v3a1 1 0 0 1 -1 1h-12a2 2 0 0 1 -2 -2v-12" />
+                            <path d="M20 12v4h-4a2 2 0 0 1 0 -4h4" />
+                        </svg>
+                        Wallet
+                    </a>
+                </li>
+                <li>
+                    <a href="/profile/" class="flex items-center p-2 hover:text-white hover:bg-indigo-600 rounded-md {% if profile %}bg-indigo-600 text-white{%else%}text-gray-800{%endif%}">
+                        <svg class="h-8 w-8 text-black-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                        Perfil
+                    </a>
+                </li>
+                <li>
+                    <a href="{%if join%}/chess/{{join}}{%endif%}" class="flex items-center p-2 hover:text-white hover:bg-indigo-600 rounded-md {% if chess %}bg-indigo-600 text-white{%else%}text-gray-800{%endif%}">
+                        <svg class="h-8 w-8 text-black-500"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <rect x="2" y="6" width="20" height="12" rx="2" />  <path d="M6 12h4m-2 -2v4" />  <line x1="15" y1="11" x2="15" y2="11.01" />  <line x1="18" y1="13" x2="18" y2="13.01" /></svg>
+                            Entrar
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="p-4 text-center text-gray-600 text-sm border-t">
+            <p class="text-sm">© 2024 Creure's Company. <br>All rights reserved.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Barra Superior -->
+<div class="fixed top-0 left-64 right-0 p-4 z-50 flex items-center justify-between bg-white shadow-md">
+    <!-- Área en la parte superior izquierda -->
+    <div class="flex items-center space-x-4">
+        <button id="searchButton" class="p-2 text-gray-800 hover:text-indigo-600">
+            <!-- Icono de búsqueda -->
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17a6 6 0 1 0-6-6 6 6 0 0 0 6 6zM19 19l-3.35-3.35" />
+            </svg>
+        </button>
+        <div class="relative">
+            <button id="notificationButton" class="p-2 text-gray-800 hover:text-indigo-600">
+                <!-- Icono de notificaciones -->
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+            </button>
+            <!-- Menú desplegable de notificaciones -->
+            <div id="notificationMenu" class="hidden absolute right-0 mt-2 w-64 bg-white border rounded-md shadow-lg z-20">
+                <div class="p-4 border-b">
+                    <p class="text-lg font-semibold">Notificaciones</p>
+                </div>
+                <div class="p-2">
+                    <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-indigo-600 hover:text-white rounded-md">
+                        <p class="text-sm">¡Tienes un nuevo mensaje!</p>
+                        <p class="text-xs">Hace 5 minutos</p>
+                    </a>
+                    <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-indigo-600 hover:text-white rounded-md">
+                        <p class="text-sm">Tu solicitud ha sido aprobada.</p>
+                        <p class="text-xs">Hace 2 horas</p>
+                    </a>
+                    <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-indigo-600 hover:text-white rounded-md">
+                        <p class="text-sm">Recordatorio: Reunión mañana.</p>
+                        <p class="text-xs">Hace 1 día</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nombre del Usuario y Menú -->
+    <div class="flex items-center space-x-4">
+        
+
+        <!-- Menú de usuario -->
+        <div class="relative">
+            <button id="userMenuButton" class="flex items-center focus:outline-none">
+                <!-- Avatar del usuario -->
+                <span class="ml-2 text-gray-800">{{user.first_name}} {{user.last_name}}</span>
+                <!-- Icono de flecha -->
+                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            <!-- Menú desplegable del usuario -->
+            <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-20">
+                <div class="flex items-center p-4">
+                    <!-- Avatar más grande -->
+                    <img class="w-12 h-12 rounded-full" src="/static/MultiplayerOnline/assets/images/avatars/avatar.png" alt="User Avatar">
+                    <div class="ml-3">
+                        <p class="text-gray-800 font-medium">{{user.first_name}} {{user.last_name}}</p>
+                        <svg class="h-8 w-8 text-green-500" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z"/>
+                            <path d="M10 13l2.538-.003c2.46 0 4.962-2.497 4.962-4.997 0-3-1.89-5-4.962-5H7c-.5 0-1 .5-1 1L4 18c0 .5.5 1 1 1h2.846L9 14c.089-.564.43-1 1-1zm7.467-5.837C19.204 8.153 20 10 20 12c0 2.467-2.54 4.505-5 4.505h.021-2.629l-.576 3.65a.998.998 0 01-.988.844l-2.712-.002a.5.5 0 01-.494-.578L7.846 19"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="border-t"></div>
+                <div class="p-2">
+                    <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-indigo-600 hover:text-white rounded-md">Configuración</a>
+                    <a href="/logout" class="block px-4 py-2 text-gray-800 hover:bg-indigo-600 hover:text-white rounded-md">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Menú del usuario
+        const userMenuButton = document.getElementById('userMenuButton');
+        const userMenu = document.getElementById('userMenu');
+        
+        if (userMenuButton && userMenu) {
+            userMenuButton.addEventListener('click', function() {
+                userMenu.classList.toggle('hidden');
+            });
+
+            // Cerrar el menú si se hace clic fuera de él
+            document.addEventListener('click', function(event) {
+                if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                    userMenu.classList.add('hidden');
+                }
+            });
+        }
+
+        // Menú de notificaciones
+        const notificationButton = document.getElementById('notificationButton');
+        const notificationMenu = document.getElementById('notificationMenu');
+
+        if (notificationButton && notificationMenu) {
+            notificationButton.addEventListener('click', function() {
+                notificationMenu.classList.toggle('hidden');
+            });
+
+            // Cerrar el menú si se hace clic fuera de él
+            document.addEventListener('click', function(event) {
+                if (!notificationButton.contains(event.target) && !notificationMenu.contains(event.target)) {
+                    notificationMenu.classList.add('hidden');
+                }
+            });
+        }
+    });
+</script>

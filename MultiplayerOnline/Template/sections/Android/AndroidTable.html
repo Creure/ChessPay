@@ -1,0 +1,132 @@
+{% load static %}
+
+<div>
+    <div class="w-full">
+        <div class="bg-white py-4 md:py-7 px-4 md:px-8 xl:px-10">
+            <div class="flex flex-col sm:flex-row items-center justify-between">
+                <!-- Search Bar -->
+                <div class="flex items-center w-full sm:w-auto">
+                    <div class="relative flex items-center w-full max-w-md sm:max-w-xs h-12 rounded-lg focus-within:shadow-lg bg-white overflow-hidden">
+                        <input
+                            class="peer h-full w-full outline-none text-sm text-gray-700 pr-10 sm:pr-12"
+                            type="search"
+                            id="search"
+                            placeholder="ChessMatch ID: " />
+                        <button class="absolute inset-y-0 right-0 flex items-center px-3 sm:px-4 py-2 bg-indigo-600 text-white rounded-r-lg hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.742a6.5 6.5 0 1 0-1.4 1.4l3.25 3.25a1 1 0 0 0 1.415-1.415l-3.25-3.25zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Pagination Controls -->
+                <div class="mt-4 sm:mt-0 flex space-x-2">
+                    {% if before %}
+                        <a class="rounded-lg bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 transition duration-150 ease-in-out" href="/{{before}}/">
+                            <div class="flex items-center py-2 px-4">
+                                <svg class="h-5 w-5 text-gray-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M14 7l-5 5 5 5V7z"/>
+                                </svg>
+                                <span class="text-sm font-medium text-gray-600">Anterior</span>
+                            </div>
+                        </a>
+                    {% endif %}
+                    
+                    <a class="rounded-lg bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 transition duration-150 ease-in-out" href="/{{next}}/">
+                        <div class="flex items-center py-2 px-4">
+                            <span class="text-sm font-medium text-gray-600 mr-2">Siguiente</span>
+                            <svg class="h-5 w-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M10 17l5-5-5-5v10z"/>
+                            </svg>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Join Lobby / Create Lobby Button -->
+                {% if join %}
+                    <a href="/chess/{{join}}" class="ml-2 sm:ml-4">
+                        <button name="join_lobby" class="focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 text-sm leading-none text-gray-600 py-3 px-6 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none flex items-center">
+                            <svg class="h-6 w-6 text-green-600 mr-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z"/>
+                                <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"/>
+                                <path d="M20 12h-13l3 -3m0 6l-3 -3"/>
+                            </svg>
+                            <span class="text-sm font-medium text-gray-700">Unirse al Lobby</span>
+                        </button>
+                    </a>
+                {% else %}
+                    <button id="toggleButton" class="mt-2 sm:mt-0 inline-flex items-center justify-center px-4 sm:px-6 py-2 sm:py-3 bg-indigo-700 hover:bg-indigo-600 focus:outline-none rounded text-sm font-medium text-white">
+                        <svg class="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="16"/>
+                            <line x1="8" y1="12" x2="16" y2="12"/>
+                        </svg>
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Table for Lobbies -->
+        <div class="mt-7 overflow-x-auto">
+            <table class="w-full whitespace-nowrap">
+                <tbody>
+                    {% for data in lobbies_information %}
+                        <tr tabindex="0" class="focus:outline-none h-16 border border-gray-100 rounded">
+                            <td>
+                                <div class="flex items-center pl-5">
+                                    <p class="text-base font-medium leading-none text-gray-700 mr-2">
+                                        {% if data.white_player %}
+                                            <div class="image-wrapper w-[50px] h-auto p-1 rounded cursor-pointer transition-all duration-200">
+                                                <img src="/static/MultiplayerOnline/assets/images/pieces/white/king.png" alt="White King" class="w-full h-auto rounded">
+                                            </div>
+                                            {{ data.white_player }}
+                                        {% else %}
+                                            <div class="image-wrapper w-[50px] h-auto p-1 rounded cursor-pointer transition-all duration-200">
+                                                <img src="/static/MultiplayerOnline/assets/images/pieces/black/king.png" alt="Black King" class="w-full h-auto rounded">
+                                            </div>
+                                            {{ data.black_player }}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </td>
+                            <td class="pl-24">
+                                <div class="flex items-center">
+                                    <p class="text-sm leading-none text-gray-600 ml-2">{{ data.id }}</p>
+                                </div>
+                            </td>
+                            <td class="pl-5">
+                                <div class="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                        <circle cx="10" cy="10" r="8" stroke="#52525B" stroke-width="1.25"/>
+                                        <path d="M10 10 L10 5" stroke="#52525B" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <rect x="8.75" y="1" width="2.5" height="1.5" fill="#52525B" stroke="#52525B" stroke-width="1.25" stroke-linejoin="round"/>
+                                    </svg>
+                                    <p class="text-sm leading-none text-gray-600 ml-2">{{ data.timer }}:00</p>
+                                </div>
+                            </td>
+                            <td class="pl-5">
+                                <div class="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                        <circle cx="10" cy="10" r="9" stroke="#52525B" stroke-width="1"/>
+                                        <path d="M9 4h2v2h2v2h-2v6h1v2h-4v-2h1V8H7V6h2V4z" fill="#52525B" stroke="#52525B" stroke-width="0.5"/>
+                                        <path d="M9 4.5h2v1H9v-1z" fill="#52525B" stroke="#52525B" stroke-width="0.5"/>
+                                        <line x1="9" y1="12" x2="11" y2="12" stroke="#52525B" stroke-width="0.5"/>
+                                    </svg>
+                                    <p class="text-sm leading-none text-gray-600 ml-2">{{ data.bet_amount }}</p>
+                                </div>
+                            </td>
+                            <td class="pl-5">
+                                <div class="flex items-center">
+                                    <a href="/join/{{ data.id }}" class="bg-indigo-600 hover:bg-indigo-500 text-white rounded px-3 py-1 text-sm font-medium">
+                                        Unirse
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
