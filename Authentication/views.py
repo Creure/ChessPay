@@ -5,9 +5,9 @@ from django.contrib.auth import logout
 from django.contrib.auth.views import LoginView
 from Authentication.models import AuthenticationTokenTime
 from django.utils import timezone
-
-
-
+from Authentication.models import User 
+from UserInformationManager.models import UserProfile
+from django.db import IntegrityError
 def logout_view(request):
     logout(request)
     return redirect('/login/')
@@ -48,4 +48,43 @@ class Authentication(View):
             return render(request, 'login.html', {'auth': request.user.is_authenticated})
 
 
+
+
+
+
+
+class Registration(View):
+
+    def get(self,request):
+        if not request.user.is_authenticated:
+            return render(request, 'Register.html')
+        else:
+            return redirect('/')
+    
+    def post(self, request):
+        try:
+            user = User(
+            username=request.POST['username'],
+            identification_number=request.POST['cedula'],
+            wallet=0.00,
+            email=request.POST['email'],
+            first_name=request.POST['first_name'],
+            last_name=request.POST['last_name'],
+            
+            phone_number='+123456789',
+            id_history=[{"event": "registered", "date": "2024-09-01"}]
+            )
+
+            # Establece una contraseña para el usuario
+            user.set_password(request.POST['password'])
+
+            # Guarda el usuario en la base de datos
+            user.save()
+            return redirect('/login/')
+        except IntegrityError as e:
+            if 'duplicate key value violates unique constraint' in str(e):
+                return render(request, 'Register.html', {'error': "Error: Clave primaria duplicada."})
+            else:
+                print("Error de integridad:", e)
+            
 

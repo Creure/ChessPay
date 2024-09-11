@@ -1,8 +1,9 @@
 <div class="w-64 bg-white h-screen shadow-md fixed top-0 left-0">
     <div class="flex flex-col h-full">
         <!-- Logo o Título -->
-        <div class="p-4 text-center text-2xl font-bold text-gray-800 border-b">
-            ChessPay Menu
+        <div class="p-4 text-center border-b">
+            <img src="/static/Auth/images/ChessPay-Logo.png" alt="ChessPay Logo" class="w-32 h-auto mx-auto">
+            
         </div>
 
         <!-- Opciones del menú -->
@@ -93,8 +94,6 @@
 
     <!-- Nombre del Usuario y Menú -->
     <div class="flex items-center space-x-4">
-        
-
         <!-- Menú de usuario -->
         <div class="relative">
             <button id="userMenuButton" class="flex items-center focus:outline-none">
@@ -105,65 +104,60 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
             </button>
-
             <!-- Menú desplegable del usuario -->
             <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-20">
-                <div class="flex items-center p-4">
-                    <!-- Avatar más grande -->
-                    <img class="w-12 h-12 rounded-full" src="/static/MultiplayerOnline/assets/images/avatars/avatar.png" alt="User Avatar">
-                    <div class="ml-3">
-                        <p class="text-gray-800 font-medium">{{user.first_name}} {{user.last_name}}</p>
-                        <svg class="h-8 w-8 text-green-500" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z"/>
-                            <path d="M10 13l2.538-.003c2.46 0 4.962-2.497 4.962-4.997 0-3-1.89-5-4.962-5H7c-.5 0-1 .5-1 1L4 18c0 .5.5 1 1 1h2.846L9 14c.089-.564.43-1 1-1zm7.467-5.837C19.204 8.153 20 10 20 12c0 2.467-2.54 4.505-5 4.505h.021-2.629l-.576 3.65a.998.998 0 01-.988.844l-2.712-.002a.5.5 0 01-.494-.578L7.846 19"/>
-                        </svg>
-                    </div>
-                </div>
-                <div class="border-t"></div>
-                <div class="p-2">
-                    <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-indigo-600 hover:text-white rounded-md">Configuración</a>
-                    <a href="/logout" class="block px-4 py-2 text-gray-800 hover:bg-indigo-600 hover:text-white rounded-md">Logout</a>
-                </div>
+                <a href="/profile/" class="block px-4 py-2 text-gray-800 hover:bg-indigo-600 hover:text-white rounded-md">
+                    Perfil
+                </a>
+                <a href="#" class="block px-4 py-2 text-gray-500 cursor-not-allowed rounded-md">
+                    Configuración
+                </a>
+                
+                <a href="/logout/" class="block px-4 py-2 text-gray-800 hover:bg-indigo-600 hover:text-white rounded-md">
+                    Cerrar sesión
+                </a>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Scripts -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Menú del usuario
-        const userMenuButton = document.getElementById('userMenuButton');
-        const userMenu = document.getElementById('userMenu');
-        
-        if (userMenuButton && userMenu) {
-            userMenuButton.addEventListener('click', function() {
-                userMenu.classList.toggle('hidden');
-            });
 
-            // Cerrar el menú si se hace clic fuera de él
-            document.addEventListener('click', function(event) {
-                if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
-                    userMenu.classList.add('hidden');
-                }
-            });
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    // Función para mostrar u ocultar el menú de notificaciones
+    const toggleNotificationMenu = () => {
+        const notificationMenu = document.getElementById('notificationMenu');
+        notificationMenu.classList.toggle('hidden');
+    };
+
+    // Función para mostrar u ocultar el menú del usuario
+    const toggleUserMenu = () => {
+        const userMenu = document.getElementById('userMenu');
+        userMenu.classList.toggle('hidden');
+    };
+
+    // Agregar event listeners a los botones
+    const notificationButton = document.getElementById('notificationButton');
+    const userMenuButton = document.getElementById('userMenuButton');
+
+    notificationButton.addEventListener('click', toggleNotificationMenu);
+    userMenuButton.addEventListener('click', toggleUserMenu);
+
+    // Cerrar el menú cuando se hace clic fuera de él
+    document.addEventListener('click', (event) => {
+        const notificationMenu = document.getElementById('notificationMenu');
+        const userMenu = document.getElementById('userMenu');
+
+        // Verificar si el clic fue fuera del menú de notificaciones y su botón
+        if (!notificationMenu.contains(event.target) && !notificationButton.contains(event.target)) {
+            notificationMenu.classList.add('hidden');
         }
 
-        // Menú de notificaciones
-        const notificationButton = document.getElementById('notificationButton');
-        const notificationMenu = document.getElementById('notificationMenu');
-
-        if (notificationButton && notificationMenu) {
-            notificationButton.addEventListener('click', function() {
-                notificationMenu.classList.toggle('hidden');
-            });
-
-            // Cerrar el menú si se hace clic fuera de él
-            document.addEventListener('click', function(event) {
-                if (!notificationButton.contains(event.target) && !notificationMenu.contains(event.target)) {
-                    notificationMenu.classList.add('hidden');
-                }
-            });
+        // Verificar si el clic fue fuera del menú de usuario y su botón
+        if (!userMenu.contains(event.target) && !userMenuButton.contains(event.target)) {
+            userMenu.classList.add('hidden');
         }
     });
+});
+
 </script>

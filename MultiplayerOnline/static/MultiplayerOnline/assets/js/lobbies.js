@@ -1,11 +1,18 @@
 document.getElementById('toggleButton').addEventListener('click', function() {
     var menu = document.getElementById('formContainer');
+    var overlay = document.getElementById('overlay');
     menu.classList.toggle('hidden');
+    overlay.classList.toggle('inset-0');
+    overlay.classList.toggle('bg-opacity-50');
 });
 
 document.getElementById('closeButton').addEventListener('click', function() {
     var menu = document.getElementById('formContainer');
     menu.classList.toggle('hidden');
+    var overlay = document.getElementById('overlay');
+    menu.classList.toggle('hidden');
+    overlay.classList.toggle('inset-0');
+    overlay.classList.toggle('bg-opacity-50');
 });
 
 
@@ -38,10 +45,12 @@ document.getElementById('closeButton').addEventListener('click', function() {
  document.getElementById('createlobby').addEventListener('click', function() {
      const betAmountSelect = document.getElementById('betAmount');
      const selectedAmount = betAmountSelect.value;
+     const timer = document.getElementById('timer');
+     const timerSelected = timer    .value;
 
      if (selectedPiece) {
          // Construir la URL para el request GET
-         const url = '/create/match/' + selectedAmount +'/'+selectedPiece;
+         const url = '/create/match/' + selectedAmount +'/'+selectedPiece +'/'+timerSelected;
 
          // Realizar el request GET
         fetch(url)

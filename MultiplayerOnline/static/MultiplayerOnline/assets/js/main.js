@@ -1,5 +1,5 @@
 class Chess_Match extends Chess{
-    constructor(id, cookie){
+    constructor(id, cookie ){
         super(id)
         
         this.cookie = cookie

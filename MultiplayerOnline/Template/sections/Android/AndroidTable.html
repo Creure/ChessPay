@@ -4,6 +4,9 @@
     <div class="w-full">
         <div class="bg-white py-4 md:py-7 px-4 md:px-8 xl:px-10">
             <div class="flex flex-col sm:flex-row items-center justify-between">
+                <div class="p-4 text-center ">
+                    <img src="/static/Auth/images/ChessPay-Logo.png" alt="ChessPay Logo" class="w-52 h-auto mx-auto">
+                </div>
                 <!-- Search Bar -->
                 <div class="flex items-center w-full sm:w-auto">
                     <div class="relative flex items-center w-full max-w-md sm:max-w-xs h-12 rounded-lg focus-within:shadow-lg bg-white overflow-hidden">
@@ -42,28 +45,27 @@
                         </div>
                     </a>
                 </div>
+
                 
-                <!-- Join Lobby / Create Lobby Button -->
-                {% if join %}
-                    <a href="/chess/{{join}}" class="ml-2 sm:ml-4">
-                        <button name="join_lobby" class="focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 text-sm leading-none text-gray-600 py-3 px-6 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none flex items-center">
-                            <svg class="h-6 w-6 text-green-600 mr-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z"/>
-                                <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"/>
-                                <path d="M20 12h-13l3 -3m0 6l-3 -3"/>
+                {%if user.wallet > 1 and not join%}
+                    <button id="toggleButton" class="focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 mt-4 sm:mt-0 inline-flex items-start justify-start px-6 py-3 bg-indigo-700 hover:bg-indigo-600 focus:outline-none rounded">
+                        <p class="text-sm font-medium leading-none text-white">
+                            <svg class="h-6 w-6 text-white-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="8" x2="12" y2="16" />
+                                <line x1="8" y1="12" x2="16" y2="12" />
                             </svg>
-                            <span class="text-sm font-medium text-gray-700">Unirse al Lobby</span>
-                        </button>
-                    </a>
-                {% else %}
-                    <button id="toggleButton" class="mt-2 sm:mt-0 inline-flex items-center justify-center px-4 sm:px-6 py-2 sm:py-3 bg-indigo-700 hover:bg-indigo-600 focus:outline-none rounded text-sm font-medium text-white">
-                        <svg class="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"/>
-                            <line x1="12" y1="8" x2="12" y2="16"/>
-                            <line x1="8" y1="12" x2="16" y2="12"/>
+                        </p>
+                    </button>
+                {%else%}
+                    <button id="MissingChessCoin" class="focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 mt-4 sm:mt-0 inline-flex items-center justify-center px-6 py-3 bg-indigo-600 hover:bg-indigo-500 focus:outline-none rounded">
+                        <svg class="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">  
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />  
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                         </svg>
                     </button>
-                {% endif %}
+                    
+                {%endif%}
             </div>
         </div>
 
@@ -117,11 +119,17 @@
                                 </div>
                             </td>
                             <td class="pl-5">
-                                <div class="flex items-center">
-                                    <a href="/join/{{ data.id }}" class="bg-indigo-600 hover:bg-indigo-500 text-white rounded px-3 py-1 text-sm font-medium">
-                                        Unirse
+                                {% if user.wallet >= data.bet_amount and not join %}
+                                    <a href="/join/{{data.id}}">
+                                        <button class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-600">
+                                            <p class="text-xs font-medium leading-none text-white">Unirse</p>
+                                        </button>
                                     </a>
-                                </div>
+                                    {% else %}
+                                    <button class="inline-flex items-center px-4 py-2 bg-gray-400 text-white rounded cursor-not-allowed" disabled>
+                                        <p class="text-xs font-medium leading-none text-white">Unirse</p>
+                                    </button>
+                                {% endif %}
                             </td>
                         </tr>
                     {% endfor %}

@@ -4,35 +4,29 @@
 /* Cream Color */
 /* EEEED2 */
 
-
 .dad-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 2rem;
-    
-    
-
 }
-
-.square {
-    background-color: #EEEED2;
-    width: 70px;
-    height: 70px;
-    
-  
-}
-
-  
 
 .main-container {
     display: grid;
     border-radius: 5px;
     grid-template-columns: repeat(8, 1fr);
-    height: 560px;
-    /* 70px * 8 = 560px */
-    width: 560px;
+    grid-gap: 1px; /* Gap between squares */
+    width: 100%;
+    max-width: 560px; /* Maximum width */
+    height: auto;
+    aspect-ratio: 1; /* Maintain a square aspect ratio */
     overflow: hidden;
+}
+
+.square {
+    background-color: #EEEED2;
+    width: 100%; /* Make squares responsive */
+    padding-bottom: 100%; /* Maintain square aspect ratio */
+    position: relative; /* Position relative for absolutely positioned images */
 }
 
 .files:nth-of-type(odd) .square:nth-of-type(even) {
@@ -43,22 +37,37 @@
     background-color: #769656;
 }
 
-img {
+.main-container img  {
+    position: absolute; /* Position images within squares */
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100%;
+    object-fit: contain; /* Keep the aspect ratio of images */
     user-select: none;
     -webkit-user-select: none; 
     -moz-user-select: none; 
 }
 
 img:hover {
-    
-    
     cursor: pointer;
-    
-    
-    
 }
 
-.img_piece_alert{
+.img_piece_alert {
     background-color: red;
+}
+
+/* Media Queries for responsiveness */
+
+@media (max-width: 768px) {
+    .main-container {
+        width: 100%;
+        max-width: 400px; /* Smaller width for smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .main-container {
+        max-width: 300px; /* Further reduction for very small screens */
+    }
 }

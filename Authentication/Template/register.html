@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Registro de Usuario</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .btn-disabled:hover {
+            cursor: not-allowed;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const termsCheckbox = document.getElementById('terms');
+            const registerButton = document.getElementById('register-button');
+            const form = document.querySelector('form');
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirm_password');
+
+            function updateButtonState() {
+                if (termsCheckbox.checked) {
+                    registerButton.disabled = false;
+                    registerButton.classList.remove('bg-gray-400', 'btn-disabled');
+                    registerButton.classList.add('bg-indigo-600');
+                } else {
+                    registerButton.disabled = true;
+                    registerButton.classList.remove('bg-indigo-600');
+                    registerButton.classList.add('bg-gray-400', 'btn-disabled');
+                }
+            }
+
+            function validatePasswords() {
+                if (password.value !== confirmPassword.value) {
+                    password.classList.add('border-red-500');
+                    confirmPassword.classList.add('border-red-500');
+                    setTimeout(() => {
+                        password.classList.remove('border-red-500');
+                        confirmPassword.classList.remove('border-red-500');
+                    }, 2000);
+                    return false;
+                }
+                return true;
+            }
+
+            function validateForm(event) {
+                let valid = true;
+                const inputs = form.querySelectorAll('input[required]');
+                
+                inputs.forEach(input => {
+                    if (!input.value) {
+                        input.classList.add('border-red-500');
+                        valid = false;
+                    } else {
+                        input.classList.remove('border-red-500');
+                    }
+                });
+
+                if (!validatePasswords()) {
+                    valid = false;
+                }
+
+                if (!valid) {
+                    event.preventDefault();
+                    setTimeout(() => {
+                        inputs.forEach(input => input.classList.remove('border-red-500'));
+                    }, 2000);
+                }
+            }
+
+            termsCheckbox.addEventListener('change', updateButtonState);
+            form.addEventListener('submit', validateForm);
+
+            // Inicializar el estado del botón
+            updateButtonState();
+        });
+    </script>
+</head>
+<body class="bg-gray-100 flex flex-col min-h-screen">
+
+    <!-- Contenedor Principal -->
+    <div class="flex-grow flex flex-col justify-center items-center">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-4xl">
+            
+            <!-- Logo ChessPay -->
+            <div class="flex justify-center mb-6">
+                <img src="/static/Auth/images/ChessPay-Logo.png" alt="Logo ChessPay" class="w-32 h-auto">
+            </div>
+
+            <h2 class="text-2xl font-bold text-center text-indigo-600 mb-6">Registro de Usuario</h2>
+
+            <!-- Formulario de Registro -->
+            <form action="/register/" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6"> {%csrf_token%}
+                <!-- Nombre -->
+                <div>
+                    <label for="first_name" class="block text-sm font-medium text-gray-700">Nombre</label>
+                    <input type="text" id="first_name" name="first_name" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                </div>
+
+                <!-- Apellido -->
+                <div>
+                    <label for="last_name" class="block text-sm font-medium text-gray-700">Apellido</label>
+                    <input type="text" id="last_name" name="last_name" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                </div>
+
+                <!-- Cédula (ID) -->
+                <div>
+                    <label for="cedula" class="block text-sm font-medium text-gray-700">Cédula (ID)</label>
+                    <input type="text" id="cedula" minlength="11" maxlength="11" name="cedula" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                </div>
+
+                <!-- Correo electrónico -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Correo electrónico</label>
+                    <input type="email" id="email" name="email" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                </div>
+
+                <!-- Número de teléfono -->
+                <div>
+                    <label for="phone_number" class="block text-sm font-medium text-gray-700">Número de teléfono</label>
+                    <input type="text" id="phone_number" name="phone_number" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                </div>
+
+                <!-- Nombre de usuario (username) -->
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700">Nombre de usuario</label>
+                    <input type="text" maxlength="30" id="username" name="username" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                </div>
+
+                <!-- Contraseña -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
+                    <input type="password" minlength="8" id="password" name="password" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                </div>
+
+                <!-- Confirmar Contraseña -->
+                <div>
+                    <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirmar Contraseña</label>
+                    <input type="password" minlength="8"  id="confirm_password" name="confirm_password" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                </div>
+
+                <!-- Código Promocional (opcional) -->
+                <div class="md:col-span-2">
+                    <label for="promo_code" class="block text-sm font-medium text-gray-700">Código Promocional (opcional)</label>
+                    <input type="text" id="promo_code" maxlength="10" name="promo_code" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+
+                <!-- Aceptar Términos y Condiciones -->
+                <div class="md:col-span-2 flex items-center">
+                    <input type="checkbox" id="terms" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                    <label for="terms" class="ml-2 text-sm text-gray-600">Acepto los <a href="#" class="text-indigo-600 hover:underline">Términos y Condiciones</a></label>
+                </div>
+
+                <!-- Botón de registro -->
+                <div class="md:col-span-2">
+                    <button type="submit" id="register-button" class="w-full p-2 rounded-md text-white btn-disabled" disabled>Registrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white py-4 shadow-md w-full mt-8">
+        <div class="container mx-auto text-center text-gray-600">
+            <p>&copy; 2024 ChessPay. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

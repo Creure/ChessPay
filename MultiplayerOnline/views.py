@@ -4,15 +4,29 @@ import json, os
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
-import logging
+import logging, pdb
 from django.db.models import Q
 from django.core.paginator import Paginator
 
 from django.shortcuts import get_object_or_404
 # Create your views here.
+def home(request):
+    return redirect('/wallet/')
+
 @login_required
 def profile(request):
-    return render(request, 'profile.html', {"profile": 'true', 'user' : request.user, })
+    search_lobbies = ChessLobbies.objects.filter(
+        (
+            (Q(white_player=request.session['username']) | Q(black_player=request.session['username'])) &
+            Q(game_status__in=['waiting','completed', 'playing'])
+        )
+    ).first()
+    try:
+        id_info = str(search_lobbies.id)
+    except:
+        id_info = False
+    
+    return render(request, 'profile.html', {"profile": 'true', 'user' : request.user, 'join': id_info})
 
 
 
@@ -35,7 +49,7 @@ def lobbies(request, page):
     search_lobbies = ChessLobbies.objects.filter(
         (
             (Q(white_player=request.session['username']) | Q(black_player=request.session['username'])) &
-            Q(game_status__in=['completed', 'playing'])
+            Q(game_status__in=['waiting','completed', 'playing'])
         )
     ).first()
     try:
@@ -45,9 +59,20 @@ def lobbies(request, page):
 
    
     return render(request, 'lobbies.html', {'lobbies_information': page_obj, 'before': str(page - 1), 'next':Next, 'user' : user, "lobbies": 'true', 'join': id_info })
+
 @login_required
 def wallet(request):
-    return render(request, 'wallet.html', {"wallet": 'true', 'user' : request.user, })
+    search_lobbies = ChessLobbies.objects.filter(
+        (
+            (Q(white_player=request.session['username']) | Q(black_player=request.session['username'])) &
+            Q(game_status__in=['waiting','completed', 'playing'])
+        )
+    ).first()
+    try:
+        id_info = str(search_lobbies.id)
+    except:
+        id_info = False
+    return render(request, 'wallet.html', {"wallet": 'true', 'user' : request.user, 'join': id_info})
 
 @login_required
 def join(request, id_info):
@@ -61,18 +86,19 @@ def join(request, id_info):
     if not match_query.white_player:
         match_query.white_player = username
         match_query.save()
+        request.session['chess_match'] = match_query.id
         return redirect(f'/chess/{str(match_query.id)}')
     else:
         match_query.black_player = username
         match_query.game_status = 'completed'
         match_query.save()
-        request.session['chess_match'] = id_info
+        request.session['chess_match'] = match_query.id
         return redirect(f'/chess/{str(match_query.id)}')
         
 
 
 @login_required
-def CreateMatch(request, amount, piece):
+def CreateMatch(request, amount, piece,timer):
     amount = float(amount.replace(',', '.'))
 
     
@@ -95,13 +121,33 @@ def CreateMatch(request, amount, piece):
             new_lobby = ChessLobbies.objects.create(
                 white_player=player_username,
                 game_status='waiting',
-                bet_amount=amount
+                bet_amount=amount,
+                timer_black_player=timer * 60,
+                timer_white_player=timer * 60,
+                timer = timer,
+                this_chessboard= {
+                        "logs": {
+                            "log_move": [],
+                            "logs_timers": []
+                        },
+                        "board_fen": 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR',
+                    }
             )
         else:
              new_lobby = ChessLobbies.objects.create(
                 black_player=player_username,
                 game_status='waiting',
-                bet_amount=amount
+                bet_amount=amount,
+                timer_black_player=timer * 60,
+                timer_white_player=timer * 60,
+                timer = timer,
+                this_chessboard= {
+                        "logs": {
+                            "log_move": [],
+                            "logs_timers": []
+                        },
+                        "board_fen": 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR',
+                    }
             )
         
         new_lobby.save()
@@ -110,18 +156,19 @@ def CreateMatch(request, amount, piece):
 
 @login_required
 def chess(request, ID):
-
     lobby = ChessLobbies.objects.filter(id=ID).first()
-
-    #logic problems when who created the lobby get it
-
-    
-    if request.session['username'] == lobby.white_player:
-        return render(request, 'chess.html', {'id': 'white', 'cookie': request.session['rT7gM2sP5qW8jN4'], 'chess': 'true','lobby_info': lobby})
-    elif request.session['username'] == lobby.black_player:
-        return render(request, 'chess.html', {'id': 'black', 'cookie': request.session['rT7gM2sP5qW8jN4'], 'chess': 'true','lobby_info': lobby }) 
-    else:
-        return HttpResponse(f'No disponible: {id_info}')
+    player_color = 'white' if request.session.get('username') == lobby.white_player else 'black' if request.session.get('username') == lobby.black_player else None
+    return render(request, 'chess.html', {
+        'id': player_color,
+        'cookie': request.session.get('rT7gM2sP5qW8jN4'),
+        'chess': 'true',
+        'lobby_info': lobby,
+        'timer_white': lobby.timer_white_player // 60,
+        'timer_black': lobby.timer_black_player // 60,
+        'timer': lobby.timer,
+        'id_lobby': lobby.id
+        
+    }) if player_color else HttpResponse(f'No disponible: {ID}')
 
 
 

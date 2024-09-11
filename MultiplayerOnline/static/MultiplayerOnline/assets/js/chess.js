@@ -29,9 +29,37 @@ class Chess{
 
     }
 
+    updateTimers(timerWhite, timerBlack) {
+        if(timerWhite){
+            document.getElementById('timer_white').innerText = timerWhite;
+        }
+        if(timerBlack){
+            document.getElementById('timer_black').innerText = timerBlack;
+
+        }
+    }
+
+    displayPlayersNames(username_white,username_black){
+        const player_white_name = document.getElementById('player_white_name')
+            const player_black_name = document.getElementById('player_black_name')
+            if(username_white){
+                player_white_name.innerText = username_white
+
+            }else{
+                player_white_name.innerText = 'Esperando Jugador...'
+
+            }
+            if(username_black){
+                player_black_name.innerText =username_black
+
+            }else{
+                player_black_name.innerText = 'Esperando Jugador...'
+            }
+    }
+
     update_chessboard(board_fen){
 
-    
+        
         const images = document.querySelectorAll('.square img');
         images.forEach(image => {
             image.remove();
@@ -174,7 +202,8 @@ class Chess{
     }
 
     send_the_selected_move(move, position, img_id, promoter_pawn, promoter_to){
-        socket.send(JSON.stringify({'data':{'type': 'do_the_move', 'move':move, 'position': position, 'img_id':img_id, 'promoter_pawn': promoter_pawn, 'promoter_to': promoter_to}}));
+        socket.send(JSON.stringify({'data':{'type': 'do_the_move', 'move':move, 'position': position, 'img_id':img_id,
+             'promoter_pawn': promoter_pawn, 'promoter_to': promoter_to}}));
         this.clearIndicator()
 
     }

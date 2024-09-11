@@ -64,12 +64,3 @@ class User(AbstractUser):
 
 
 
-class LoginHistory(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='login_histories')
-    login_time = models.DateTimeField(auto_now_add=True)
-    ip_address = models.GenericIPAddressField()
-    location = models.CharField(max_length=255, blank=True, null=True)
-    status = models.CharField(max_length=10, choices=[('success', 'Éxito'), ('failed', 'Fallido')])
-
-    def __str__(self):
-        return f"{self.user.username} - {self.login_time} - {self.status}"

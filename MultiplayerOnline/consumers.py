@@ -1,5 +1,4 @@
-from channels.generic.websocket import WebsocketConsumer
-from asgiref.sync import async_to_sync
+from channels.generic.websocket import AsyncWebsocketConsumer
 from Authentication.models import AuthenticationTokenTime
 from os import path
 import json
@@ -9,238 +8,282 @@ import logging
 from django.shortcuts import get_object_or_404
 from MultiplayerOnline.models import ChessLobbies
 import chess, pdb
+import asyncio
+from channels.db import database_sync_to_async
+import datetime
 
-logging.basicConfig(filename='debug.log',level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s: ')
+logging.basicConfig(filename='debug.log',level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s: ') # move to settings
 
 
-class ChessBoardCustomer(WebsocketConsumer):
-    
-    def connect(self):
+
+
+class ChessBoardCustomer(AsyncWebsocketConsumer):
+    async def connect(self):
         
-        # Connect the client to the group
-        
-
         if self.scope["user"].is_authenticated: 
-            
+            self.id = self.scope['session'].get('chess_match')
+            self.room_group_name = f'ChessLobby_{self.id}'
+            await self.channel_layer.group_add(
+                self.room_group_name,
+                self.channel_name
+            )
             try:
                 csrf_token = self.scope['session'].get('rT7gM2sP5qW8jN4')
-                data = AuthenticationTokenTime.objects.get(pk=csrf_token)
-                if data.valid_session: 
-                    # Match token I need to add here
-                     #verify credentials before to accept the coneection 
-                    self.match_query = get_object_or_404(ChessLobbies, pk= self.scope['session'].get('chess_match'))
-                    self.group_name =  self.scope['session'].get('chess_match')
+                self.data = await database_sync_to_async(AuthenticationTokenTime.objects.get)( pk= csrf_token)
+                
+                if self.data.valid_session: 
                     
-                        # Replace 'group_name' with the name of your group
-                    async_to_sync(self.channel_layer.group_add)(
-                        self.group_name,
-                        self.channel_name
-                    )
-                   
+                    self.match_query = await database_sync_to_async(ChessLobbies.objects.get)(pk=self.scope['session'].get('chess_match'))
+                    match self.match_query.game_status:
 
-                    if self.match_query.game_status == 'completed':
-                        
-                        self.chess_match = {
-                            self.scope['session'].get('chess_match'):chess.Board()
-                        }
-                    
-                        
-                    elif self.match_query.game_status == 'playing':
-                        self.chess_match = {
-                            self.scope['session'].get('chess_match'):chess.Board(self.match_query.this_chessboard['board_fen'])
-                        }
-                    elif self.match_query.game_status == 'Check Mate!':
-                        self.chess_match = {
-                            self.scope['session'].get('chess_match'):chess.Board(self.match_query.this_chessboard['board_fen'])
-                        }
-                    elif self.match_query.game_status == 'waiting':
-                        self.chess_match = {
-                            self.scope['session'].get('chess_match'):chess.Board()
-                        }
+                        case 'completed':
+                            self.chess_match = {
+                                self.scope['session'].get('chess_match'):chess.Board()
+                            }
+                        case 'playing':
+                            self.chess_match = {
+                                self.scope['session'].get('chess_match'):chess.Board(self.match_query.this_chessboard['board_fen']) #if board_fen is empty error
+                            }
+                        case 'Check Mate!':
+                            self.chess_match = {
+                                self.scope['session'].get('chess_match'):chess.Board(self.match_query.this_chessboard['board_fen'])
+                            }
+                        case 'timeout':
+                            self.chess_match = {
+                                self.scope['session'].get('chess_match'):chess.Board(self.match_query.this_chessboard['board_fen'])
+                            }
+                            await self.accept()
+                            await self.send(text_data=json.dumps({'message':'timeout','type':'timeout'})) 
+                            await self.close()
+                        case 'waiting':
+                            self.chess_match = {
+                                self.scope['session'].get('chess_match'):chess.Board()
+                            }
+                    await self.accept()
+                    await self.send(text_data=json.dumps({'message':'','type':'__init__',
+                
+                        'username_white': self.match_query.white_player,
+                        'username_black': self.match_query.black_player,
+                        'chessboard': self.chess_match[self.scope['session'].get('chess_match')].fen(), 'turn': 'white' if self.chess_match[self.scope['session'].get('chess_match')].turn else 'black',
+                        'white_timer': str(datetime.timedelta(seconds=self.match_query.timer_white_player))[-5:],
+                        'black_timer': str(datetime.timedelta(seconds=self.match_query.timer_black_player))[-5:]
+                    }))
+                    await self.send(text_data=json.dumps({'message':'updated_chessboard','type':'updated_chessboard', 
+                        'chessboard': self.chess_match[self.scope['session'].get('chess_match')].fen(), 'turn': 'white' if self.chess_match[self.scope['session'].get('chess_match')].turn else 'black',
+                
+                    }))
+                   
+                    if self.match_query.this_chessboard['board_fen'] != 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR':
+                        self.timer = asyncio.create_task(self.start_timer())
+                else:
+                    self.close() 
+            except Exception as e:
+                logging.exception('sorry an error has ocurred: '+ str(e))
+                await self.close()
+        else:
+            self.close()
+    
+    async def start_timer(self):
+        while self.match_query.timer_white_player > 0 and self.match_query.timer_black_player > 0:
+            if self.chess_match[self.scope['session'].get('chess_match')].turn:  # Turno de blancas
+                self.match_query.timer_white_player -= 1
+                
+                if self.match_query.timer_white_player <= 0:
+                    self.match_query.game_status = 'timeout'
+                    self.match_query.winning_player = self.match_query.black_player
+                    await database_sync_to_async(self.match_query.save)()
+                    await self.send_game_state('timer_update')
+                    await self.close()
+            else:  # Turno de negras
+                self.match_query.timer_black_player -= 1
+                
+                if self.match_query.timer_black_player <= 0:
+                    self.match_query.game_status = 'timeout'
+                    self.match_query.winning_player = self.match_query.white_player
+                    await database_sync_to_async(self.match_query.save)()
+                    await self.send_game_state('timer_update')
+                    await self.close()
+            
+            await database_sync_to_async(self.match_query.save)()
+            await self.send_game_state('timer_update')
+            
+            await asyncio.sleep(1)
+
+    async def send_game_state(self, message_type):
+        chess_match = self.chess_match[self.scope['session'].get('chess_match')]
+        await self.send(text_data=json.dumps({
+            'type': message_type,
+            'chessboard': chess_match.fen(),
+            'white_timer': str(datetime.timedelta(seconds=self.match_query.timer_white_player))[-5:],
+            'black_timer': str(datetime.timedelta(seconds=self.match_query.timer_black_player))[-5:]
+        }))     
+    
+    async def disconnect(self, close_code):
+        # Deja el grupo de sala
+        if self.match_query.game_status == 'waiting':
+            await database_sync_to_async(self.match_query.delete)()
+        await self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
+        )
+
+    async def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        message = text_data_json.get('data', '')
+
+        # Envía el mensaje a todos los clientes en el grupo de sala
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'node',
+                'data': message
+            }
+        )
+    async def node(self, event):
+        # Modifica el campo this_chessboard
+        self.match_query = await database_sync_to_async(ChessLobbies.objects.get)(pk=self.scope['session'].get('chess_match'))
+
+        chess_match = self.chess_match[self.scope['session'].get('chess_match')]
+        
+
+        turn = 'white' if chess_match.turn else 'black'
+
+        message = ''
+        
+        match event:
+            
+            
+            case {'data': {'type':'legal_moves'}}:
+                position = chess.parse_square(event['data']['position']) 
+                legal_moves = chess_match.legal_moves
+                legal_moves_pieces = [move for move in legal_moves if move.from_square == position]
+                data = []
+                message = ''
+                #if legal_moves_pieces == []:
+                
+                for move in legal_moves_pieces:
+                    data.append(move.uci())
+
+ 
+                
+                #pdb.set_trace()
+
+                match turn:
+                    case 'white':
+                        try:
+
+                            if chess_match.piece_at(chess.SQUARE_NAMES.index(event['data']['position'])).piece_type == 1 and '7' in event['data']['position'] and data != []:
+                                data = list(set([move[:-1] for move in data]))
+                                message = 'pawn-upgrade'
+                        except:
+                            pass
+                    case 'black':
+                        try:
+
+                            if chess_match.piece_at(chess.SQUARE_NAMES.index(event['data']['position'])).piece_type == 1 and '2' in event['data']['position'] and data != []:
+                                data = list(set([move[:-1] for move in data]))
+                                message = 'pawn-upgrade'
+                        except:
+                            pass
+                logging.debug(f'legal_moves:{event['data']['position']}: {data}')
+                logging.debug(f"event img_id: {event['data']}")
+                await self.send(text_data=json.dumps({'message':message,'type':'legal_moves','legal_moves':data, 'position':event['data']['position'], 'img_id': event['data']['img_id'], 'turn': turn })) 
+                
+                if data == []:             
+
+                    if chess_match.is_check():
+                        if chess_match.turn:
+                            king_square = chess_match.king(chess.WHITE)
+
+                        else:
+                            king_square= chess_match.king(chess.BLACK)
+
+                        await self.send(text_data=json.dumps({'message':'check','type':'legal_moves','legal_moves':data,'turn': turn, 'king_position': chess.square_name(king_square)}))
+
                     else:
-                        self.close()
-                    if self.chess_match[self.scope['session'].get('chess_match')].turn:
+                        pass#pdb.set_trace()
+                
+            case  {'data': {'type':'do_the_move'}}:
+        
+                #pdb.set_trace()
+                logging.debug(f"chess_match.push {event["data"]['move']}")
+                logging.debug(f"position 'do the move': {event["data"]['position']} || img_id {event["data"]['img_id']}")
+                legal_moves = chess_match.legal_moves
+                legal_moves_pieces = [move for move in legal_moves if move.from_square == chess.parse_square(event['data']['position']) ]
+                data = []
+
+                for move in legal_moves_pieces:
+                    data.append(move.uci())
+
+
+                if event["data"]['move'] in data:
+
+                    chess_match.push(chess.Move.from_uci(event["data"]['move']))
+                    
+                    if chess_match.turn:
                         turn = 'black'
                     else:
                         turn = 'white'
 
-                    self.chess_match['white'] = [self.match_query.white_player, 'cookie']
-                    self.chess_match['black'] = [self.match_query.black_player, 'cookie']
-                    self.chess_match['status'] = self.match_query.game_status
-                    self.accept()
-
-                
-                    self.send(text_data=json.dumps({'message':'updated_chessboard','type':'', 'chessboard': self.chess_match[self.scope['session'].get('chess_match')].fen(), 'turn': turn })) #updating the Chess_board
+                    if chess_match.is_game_over():
+                        if chess_match.is_checkmate():
+                            message = "¡Jaque mate!"
+                        elif chess_match.is_stalemate():
+                            message = "¡Ahogado!"
+                        elif chess_match.is_insufficient_material():
+                            message = "Insuficiencia de material"
+                        elif chess_match.is_seventyfive_moves():
+                            message = "Regla de los 50 movimientos"
+                        else:
+                            message = "Fin de la partida por otros motivos"
                     
-            except Exception as e:
-                logging.error('sorry an error has ocurred: '+ str(e))
-               #debugging the error          
-        else:
-            logging.error("Not authenticated")
-            self.close()
-            
-       
-        
-    def disconnect(self, close_code):
-        # Disconnect the client from the group
-        self.group_name = 'Disconnecting'
-        if self.match_query.game_status == 'waiting':
-            self.match_query.delete()  
+                    
+                    if self.match_query.game_status == 'completed':
+                        self.match_query.game_status = 'playing'
+                        
+                        self.timer = asyncio.create_task(self.start_timer())
+                    
+                    
+                    logging.debug(f'tracking: {event['data']}')
+                    self.match_query.this_chessboard['board_fen'] = self.chess_match[self.scope['session'].get('chess_match')].fen()
+                    self.match_query.this_chessboard['logs']['log_move'] = [move.uci() for move in chess_match.move_stack]
+                    self.match_query.this_chessboard['logs']['logs_timers'].append(f'{self.match_query.timer_white_player}:{self.match_query.timer_black_player}')
+                
+                    
+                    await database_sync_to_async(self.match_query.save)()
 
-        try:
-            async_to_sync(self.channel_layer.group_discard)(
-            self.group_name,
-            self.channel_name
-            )
-        except Exception as e:
-            logging.error(f'Error: {e}')
-
-    def receive(self, text_data):
-        # Receive a message from the client
-        # Parse the received JSON message
-        data = json.loads(text_data)
-        
-        
-
-        # Send the data to all clients in the group
-        logging.debug(data['data'])
-        async_to_sync(self.channel_layer.group_send)(
-            self.group_name,
-            {
-                'type': 'node',
-                'data': data['data']
-            }
-        )
-
-    def node(self, event):
-        logging.debug(f'obj self.chess_match: {self.chess_match}')
-        # Modifica el campo this_chessboard
-        chess_match = self.chess_match[self.scope['session'].get('chess_match')]
-        if chess_match.turn:
-            turn = 'white'
-        else:
-            turn = 'black'
-
-        message = ''
-        if event["data"]['type'] == 'legal_moves' :
-            position = chess.parse_square(event['data']['position']) 
-            legal_moves = chess_match.legal_moves
-            legal_moves_pieces = [move for move in legal_moves if move.from_square == position]
-            data = []
-            message = ''
-            #if legal_moves_pieces == []:
-            #    pdb.set_trace()
-            for move in legal_moves_pieces:
-                data.append(move.uci())
-
-            #pdb.set_trace()
-            logging.debug(f'legal_moves with promoters:{event['data']['position']}: {legal_moves_pieces}')
-            logging.debug(f'legal_moves with filter:{event['data']['position']}: {legal_moves}')
-            
-            #pdb.set_trace()
-
-            match turn:
-                case 'white':
-                    if chess_match.piece_at(chess.SQUARE_NAMES.index(event['data']['position'])).piece_type == 1 and '7' in event['data']['position'] and data != []:
-                        data = list(set([move[:-1] for move in data]))
-                        message = 'pawn-upgrade'
-                case 'black':
-                    if chess_match.piece_at(chess.SQUARE_NAMES.index(event['data']['position'])).piece_type == 1 and '2' in event['data']['position'] and data != []:
-                        data = list(set([move[:-1] for move in data]))
-                        message = 'pawn-upgrade'
-
-            #pdb.set_trace()
-            logging.debug(f'legal_moves:{event['data']['position']}: {data}')
-            logging.debug(f"event img_id: {event['data']}")
-            self.send(text_data=json.dumps({'message':message,'type':'legal_moves','legal_moves':data, 'position':event['data']['position'], 'img_id': event['data']['img_id'], 'turn': turn })) 
-            
-            if data == []:             
-
-                if chess_match.is_check():
-                    if chess_match.turn:
-                        king_square = chess_match.king(chess.WHITE)
-
+                    if 'promoter_pawn' in event['data']:
+                        await self.send(text_data=json.dumps({'message':message,'type':'updated', 'turn': turn, 'move': event["data"]['move'],
+                        'position':event["data"]['position'],'turn': turn,'chessboard': self.chess_match[self.scope['session'].get('chess_match')].fen(),
+                        'img_id': event['data']['img_id'], 'promoter_pawn': event["data"]['promoter_pawn'], 'promoter_to': event["data"]['promoter_to'],
+                        })) 
+                    
                     else:
-                        king_square= chess_match.king(chess.BLACK)
-
-                    self.send(text_data=json.dumps({'message':'check','type':'legal_moves','legal_moves':data,'turn': turn, 'king_position': chess.square_name(king_square)}))
+                        await self.send(text_data=json.dumps({'message':message,'type':'updated', 'turn': turn, 'move': event["data"]['move'][-2:],
+                        'position':event["data"]['position'],'turn': turn,'chessboard': self.chess_match[self.scope['session'].get('chess_match')].fen(),
+                        'img_id': event['data']['img_id']})) 
+                    
 
                 else:
-                    pass#pdb.set_trace()
-                
+                    logging.exception(f"invalid move: {event["data"]['move']} ||  position: {event["data"]['position']}")
+                    logging.exception(f"data: {data} || legal_moves: {legal_moves} || legal_moves_pieces: {legal_moves_pieces}")
 
-        if  event["data"]['type'] == 'do_the_move':
-            #pdb.set_trace()
-            logging.debug(f"chess_match.push {event["data"]['move']}")
-            logging.debug(f"position 'do the move': {event["data"]['position']} || img_id {event["data"]['img_id']}")
-            legal_moves = chess_match.legal_moves
-            legal_moves_pieces = [move for move in legal_moves if move.from_square == chess.parse_square(event['data']['position']) ]
-            data = []
-
-            for move in legal_moves_pieces:
-                data.append(move.uci())
-
-
-            if event["data"]['move'] in data:
-
-                chess_match.push(chess.Move.from_uci(event["data"]['move']))
-                
-                if chess_match.turn:
-                    turn = 'black'
-                else:
-                    turn = 'white'
-
-                if chess_match.is_game_over():
-                    if chess_match.is_checkmate():
-                        message = "¡Jaque mate!"
-                    elif chess_match.is_stalemate():
-                        message = "¡Ahogado!"
-                    elif chess_match.is_insufficient_material():
-                        message = "Insuficiencia de material"
-                    elif chess_match.is_seventyfive_moves():
-                        message = "Regla de los 50 movimientos"
-                    else:
-                        message = "Fin de la partida por otros motivos"
-                
-                
-                if self.match_query.game_status == 'completed':
-                    self.match_query.game_status = 'playing'
-                
-                
-                self.match_query.this_chessboard = {
-                    'board_fen': self.chess_match[self.scope['session'].get('chess_match')].fen(),
-                    'moves':[move.uci() for move in chess_match.move_stack]
-                }
-                
-                self.match_query.save()
-
-                # {
-                #   'board_fen': ''rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';'
-                #   'moves': ['a2','c2.....]
-                #}
-                if 'promoter_pawn' in event['data']:
-                    self.send(text_data=json.dumps({'message':message,'type':'updated', 'turn': turn, 'move': event["data"]['move'],
-                    'position':event["data"]['position'],'turn': turn,'chessboard': self.chess_match[self.scope['session'].get('chess_match')].fen(),
-                    'img_id': event['data']['img_id'], 'promoter_pawn': event["data"]['promoter_pawn'], 'promoter_to': event["data"]['promoter_to']})) 
-                
-                else:
-                    self.send(text_data=json.dumps({'message':message,'type':'updated', 'turn': turn, 'move': event["data"]['move'][-2:],
-                    'position':event["data"]['position'],'turn': turn,'chessboard': self.chess_match[self.scope['session'].get('chess_match')].fen(),
-                    'img_id': event['data']['img_id']})) 
-            else:
-                logging.error(f"invalid move: {event["data"]['move']} ||  position: {event["data"]['position']}")
-                logging.error(f"data: {data} || legal_moves: {legal_moves} || legal_moves_pieces: {legal_moves_pieces}")
-            #piece = chess_match.piece_type_at(chess.parse_square(event["data"]['move'][-2:]))
+                if chess_match.is_checkmate():
+                    await self.send(text_data=json.dumps({'message':'checkmate','type':'checkmate'})) 
+                    
+                    #changes games status in the server
+                    self.match_query.game_status = 'Check Mate!'
+                    await database_sync_to_async(self.match_query.save)()
+                    await self.close()
             
 
-            
         
-        
-        if chess_match.is_checkmate():
-            self.send(text_data=json.dumps({'message':'checkmate','type':'checkmate'})) 
-            
-            #changes games status in the server
-            self.match_query.game_status = 'Check Mate!'
-            self.match_query.save()
-            self.close()
-        
+
+        await self.send(text_data=json.dumps({'message':'','type':'__init__',
+                
+                    'username_white': self.match_query.white_player,
+                    'username_black': self.match_query.black_player,
+                    'chessboard': self.chess_match[self.scope['session'].get('chess_match')].fen(), 'turn': 'white' if self.chess_match[self.scope['session'].get('chess_match')].turn else 'black',
+                    'white_timer': str(datetime.timedelta(seconds=self.match_query.timer_white_player))[-5:],
+                    'black_timer': str(datetime.timedelta(seconds=self.match_query.timer_black_player))[-5:]
+                    }))

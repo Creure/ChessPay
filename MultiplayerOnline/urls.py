@@ -6,5 +6,6 @@ urlpatterns = [
     path('wallet/', wallet),
     path('profile/', profile),
     path('<int:page>/', lobbies),
-   path('create/match/<str:amount>/<str:piece>', CreateMatch)
+   path('create/match/<str:amount>/<str:piece>/<int:timer>', CreateMatch),
+   path('', home)
 ]
