@@ -33,7 +33,6 @@ socket.onopen = function(event) {
 socket.onmessage = function(event) {
     
     globalThis.eventData = JSON.parse(event.data);
-    chess_Match.turn = eventData['turn']
     
 
     console.log(eventData)
@@ -46,10 +45,10 @@ socket.onmessage = function(event) {
             chess_Match.chess_board_fen = eventData['chessboard']
             chess_Match.turn = eventData['turn']
             chess_Match.update_chessboard(eventData['chessboard'])
-        
+            console.log()
         
             break;
-
+ 
         case 'legal_moves':
             chess_Match.show_allowed_move(eventData['legal_moves'], eventData['position'], eventData['img_id'], eventData['message'])
             break;
@@ -64,13 +63,20 @@ socket.onmessage = function(event) {
         case 'updated':
             chess_Match.chess_board_fen = eventData['chessboard']
             chess_Match.update_chessboard(eventData['chessboard'])
+            chess_Match.turn = eventData['turn']
             break;        
             
         case 'timer_update':
             chess_Match.updateTimers(eventData['white_timer'], eventData['black_timer'])    
             break;
 
-       
+        case 'pieces_capture_update':
+            const pieces_capture_dashboard_white = document.getElementById('pieces_capture_dashboard_white')
+            const pieces_capture_dashboard_black = document.getElementById('pieces_capture_dashboard_black')
+
+            pieces_capture_dashboard_white.innerText = eventData['captured_black']
+            pieces_capture_dashboard_black.innerText = eventData['captured_white']
+            break;
        
     }
 
@@ -78,7 +84,8 @@ socket.onmessage = function(event) {
     
     switch (eventData['message']) {
         case 'checkmate':
-            alert("JAQUE MATE!")
+            window.location.href = "/result/" + eventData['id']
+
             break;
         case 'check':
             chess_Match.check_indicator(eventData['turn'], eventData['king_position'])

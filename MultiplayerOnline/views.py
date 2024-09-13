@@ -131,6 +131,10 @@ def CreateMatch(request, amount, piece,timer):
                             "logs_timers": []
                         },
                         "board_fen": 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR',
+                        'pieces_captured': {
+                            'white_captured':[],
+                            'black_captured': []
+                        }
                     }
             )
         else:
@@ -147,6 +151,10 @@ def CreateMatch(request, amount, piece,timer):
                             "logs_timers": []
                         },
                         "board_fen": 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR',
+                        'pieces_captured': {
+                            'white_captured':[],
+                            'black_captured': []
+                        }
                     }
             )
         
@@ -158,23 +166,53 @@ def CreateMatch(request, amount, piece,timer):
 def chess(request, ID):
     lobby = ChessLobbies.objects.filter(id=ID).first()
     player_color = 'white' if request.session.get('username') == lobby.white_player else 'black' if request.session.get('username') == lobby.black_player else None
-    return render(request, 'chess.html', {
+    
+    if lobby.game_status in ['waiting', 'playing', 'completed']:
+        return render(request, 'chess.html', {
+            'id': player_color,
+            'cookie': request.session.get('rT7gM2sP5qW8jN4'),
+            'chess': 'true',
+            'lobby_info': lobby,
+            'timer_white': lobby.timer_white_player // 60,
+            'timer_black': lobby.timer_black_player // 60,
+            'timer': lobby.timer,
+            'id_lobby': lobby.id,
+            
+            
+            
+        }) if player_color else HttpResponse(f'No disponible: {ID}')
+
+    elif lobby.game_status in ['timeout', 'Check Mate!', 'draw']:
+        return redirect('/result/' + lobby.id)
+
+
+def result(request, ID):
+    lobby = ChessLobbies.objects.filter(id=ID).first()
+    player_color = 'white' if request.session.get('username') == lobby.white_player else 'black' if request.session.get('username') == lobby.black_player else None
+    if lobby.game_status in ['waiting', 'playing', 'completed']:
+        return redirect('/chess/' + lobby.id)
+    info_dict = {
         'id': player_color,
         'cookie': request.session.get('rT7gM2sP5qW8jN4'),
-        'chess': 'true',
+        'result': 'true',
         'lobby_info': lobby,
         'timer_white': lobby.timer_white_player // 60,
         'timer_black': lobby.timer_black_player // 60,
         'timer': lobby.timer,
-        'id_lobby': lobby.id
+        'id_lobby': lobby.id,
+        'player': request.session.get('username'),
+        'status': True,
+        'board_fen':lobby.this_chessboard['board_fen']
+    }
+    if request.session.get('username') == lobby.winning_player:
+
+        info_dict['result'] = True
+        info_dict['ChessCoin']= lobby.bet_amount / 2 if lobby.bet_amount < 10 else float(lobby.bet_amount)* 0.90
         
-    }) if player_color else HttpResponse(f'No disponible: {ID}')
-
-
-
-
-
-
+    else:
+        info_dict['result'] = False
+        info_dict['ChessCoin']= lobby.bet_amount 
+    return render(request, 'result.html',info_dict ) if player_color else HttpResponse(f'No disponible: {ID}')
 
 
 

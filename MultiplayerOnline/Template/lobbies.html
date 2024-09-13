@@ -12,11 +12,8 @@
     <script defer src="https://unpkg.com/alpinejs@3.2.2/dist/cdn.min.js"></script>
     <title>{% block title %}Lobbies{% endblock %}</title>
   
+    {% block extra_head %}<link rel="stylesheet" href="{% static 'MultiplayerOnline/assets/css/board.css'%}" />{% endblock %}
     
-    {%if chess%}
-        <link rel="stylesheet" href="{% static 'MultiplayerOnline/assets/css/board.css'%}" />
-
-    {%endif%}
 
   
 
@@ -265,10 +262,11 @@ display: flex;
     <script src="{% static 'MultiplayerOnline/assets/js/vendor.bundle.js' %}"></script>
    
     <script src="{% static 'MultiplayerOnline/assets/js/theme.bundle.js' %}"></script>
-    <script src="{% static 'MultiplayerOnline/assets/js/functions.js' %}"></script>
     <script src="{% static 'MultiplayerOnline/assets/js/chess.js' %}"></script>
     <script src="{% static 'MultiplayerOnline/assets/js/main.js' %}"></script>
     <script src="{% static 'MultiplayerOnline/assets/js/socket.js' %}"></script> 
+
+    
 {%endif%}
 
     

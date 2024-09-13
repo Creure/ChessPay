@@ -325,7 +325,6 @@ class Chess{
         modalContent.appendChild(pieceOptions);
 
 
-        // Crear botones para cada pieza
         const pieces = ['queen', 'rook', 'bishop', 'knight'];
         pieces.forEach(piece => {
             const imgElement = document.createElement('img');
@@ -337,11 +336,11 @@ class Chess{
             imgElement.addEventListener("click", function() {
                 if(piece == "knight"){
                     chess_Match.move_the_pieces(movement + 'n', position, img_id, 'promoter', piece)
-                    chess_Match.send_the_selected_move(movement+ 'n', position, img_id, 'promoter', piece) //here happends the error
+                    chess_Match.send_the_selected_move(movement+ 'n', position, img_id, 'promoter', piece) 
                 }
                 else{
                     chess_Match.move_the_pieces(movement + piece[0], position, img_id, 'promoter', piece)
-                    chess_Match.send_the_selected_move(movement+ piece[0], position, img_id, 'promoter', piece)   //here happends the error 
+                    chess_Match.send_the_selected_move(movement+ piece[0], position, img_id, 'promoter', piece)    
                 }
                 const divToRemove = document.getElementById('coronationModal');
 
@@ -421,9 +420,7 @@ class Chess{
         });
     }
 
-    check_mate(){
-        alert('CHECK MATE!!')
-    }
+   
 
     check_indicator(king_color, king_position){
 
