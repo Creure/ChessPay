@@ -8,5 +8,6 @@ urlpatterns = [
     path('', include('MultiplayerOnline.urls')),
     path('', include('Authentication.urls')),
     path('', include('ChessCoin.urls')),
-    path('', include('UserInformationManager.urls'))
+    path('', include('UserInformationManager.urls')),
+     path('', include('PayPal_ChessCoin.urls'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

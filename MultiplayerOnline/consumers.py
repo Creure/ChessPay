@@ -11,6 +11,9 @@ import chess, pdb
 import asyncio
 from channels.db import database_sync_to_async
 import datetime
+from PayPal_ChessCoin.Nush_ChessCoin import NushChessCoin
+
+from ChessCoin.models import ChessCoin_Transaccions
 
 logging.basicConfig(filename='debug.log',level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s: ') # move to settings
 
@@ -142,12 +145,11 @@ class ChessBoardCustomer(AsyncWebsocketConsumer):
 
 
     async def disconnect(self, close_code):
-        # Deja el grupo de sala
-        try:
-            if self.match_query.game_status == 'waiting':
-                await database_sync_to_async(self.match_query.delete)()
-        except Exception as e:
-            logging.exception('sorry an error has ocurred: '+ str(e))
+        
+        self.match_query = await database_sync_to_async(ChessLobbies.objects.get)(pk=self.scope['session'].get('chess_match'))
+
+        if self.match_query.game_status == 'waiting':
+           self.match_query.delete()
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
@@ -305,9 +307,19 @@ class ChessBoardCustomer(AsyncWebsocketConsumer):
                         self.match_query.winning_player = self.match_query.white_player
                     self.match_query.game_status = 'Check Mate!'
                     await database_sync_to_async(self.match_query.save)()
+                    await NushChessCoin().complete_transaccion(self.match_query.id)
+                    await self.close()
+                elif chess_match.is_insufficient_material():
+                    await self.send(text_data=json.dumps({'message':'checkmate','type':'insuffimaterialcient ', 'id': self.match_query.id})) 
+                    if chess_match.turn == chess.WHITE:
+                        self.match_query.winning_player = 'draw'
+                    else:
+                        self.match_query.winning_player = 'draw'
+                    self.match_query.game_status = 'draw'
+                    await database_sync_to_async(self.match_query.save)()
                     
                     await self.close()
-            
+                    self.close()    
 
         
 

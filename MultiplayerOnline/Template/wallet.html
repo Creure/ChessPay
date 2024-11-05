@@ -4,8 +4,6 @@
 {% block title %}Wallet{% endblock %}
 
 {% block content %}
-<!-- WalletMenuComponent.html -->
-<!-- WalletMenuComponent.html -->
 <div class="w-full max-w-screen-xl mx-auto bg-white shadow-xl rounded-xl p-8 border border-gray-300 max-h-screen overflow-y-auto" style="padding-top: 80px;">
     <!-- Contenedor Principal -->
     <div class="relative">
@@ -31,13 +29,84 @@
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Balance Actual</h1>
                     <div class="flex items-center">
                         <img src="{% static 'ChessCoin/ChessCoin.png' %}" alt="Ícono de dólar" class="w-20   h-20  mr-2">
-                        <p class="text-3xl md:text-5xl font-extrabold text-gray-900">{{ user.wallet }}</p>
+                        <p id='wallet' class="text-3xl md:text-5xl font-extrabold text-gray-900">{{ wallet_amount }}</p>
                     </div>
                     <p class="text-sm text-gray-600 mt-2">Disponible en tu wallet.</p>
                     <!-- Botón Comprar -->
-                    <a href="#" class="block bg-blue-600 text-white py-3 px-5 mt-4 rounded-lg shadow-md text-center hover:bg-blue-700 transition duration-200 ease-in-out">
+                    <a id='buy' href='#' onclick="document.getElementById('Buy_ChessCoin_Menu').classList.toggle('hidden')" class="block bg-blue-600 text-white py-3 px-5 rounded-lg shadow-md text-center hover:bg-blue-700 transition duration-200 ease-in-out">
                         Comprar
                     </a>
+
+                    <!-- Menu de comprar ChessCoin--> 
+                    <div id='Buy_ChessCoin_Menu' class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 backdrop-blur-md flex items-center justify-center">
+                        <div class="bg-white p-10 rounded-lg shadow-lg w-full max-w-lg relative">
+                            <button 
+                                type="button"
+                                class="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                                aria-label="Cerrar"
+                                onclick="document.getElementById('Buy_ChessCoin_Menu').classList.toggle('hidden')"
+                            >
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                            <div class="flex items-center justify-center mb-6">
+                                <img 
+                                    src="{% static 'ChessCoin/ChessCoin.png' %}" 
+                                    alt="ChessCoin Logo" 
+                                    class="w-32 h-32 object-cover"
+                                />
+                            </div>
+                            <h2 class="text-3xl font-semibold mb-6 text-center text-gray-800">Comprar ChessCoin</h2>
+                    
+                            <form method="GET" action="/payment/create/" class="space-y-6">
+                                <div>
+                                    <label for="quantity" class="block text-gray-700 text-lg font-medium mb-2">
+                                        Selecciona la cantidad
+                                    </label>
+                                    <select 
+                                        id="quantity" 
+                                        name="quantity" 
+                                        class="shadow-lg border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        required
+                                    >
+                                        <option value="" disabled selected>Selecciona una cantidad</option>
+                                        <option value="2.41">$2,00 (Comisión: $0.41, Total: $2.41)</option>
+                                        <option value="5.57">$5,00(Comisión: $0.57, Total: $5.57)</option>
+                                        <option value="10.84">$10,00 (Comisión: $0.84, Total: $10.84)</option>
+                                        <option value="26.65">$25,00 (Comisión: $1.65, Total: $26.65)</option>
+                                        <option value="53.00">$50,00 (Comisión: $3.00, Total: $53.00)</option>
+                                        <option value="106.90">$100,00 (Comisión: $5.70, Total: $106.90)</option>
+                                        
+                                    </select>
+                                </div>
+                    
+                                <div>
+                                    <label for="payment-method" class="block text-gray-700 text-lg font-medium mb-2">
+                                        Selecciona un método de pago
+                                    </label>
+                                    <select 
+                                        id="payment-method" 
+                                        name="payment-method" 
+                                        class="shadow-lg border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        required
+                                    >
+                                        <option value="" disabled selected>Selecciona un método de pago</option>
+                                        <option value="paypal">PayPal</option>
+                                        <!-- Agregar más opciones de pago si es necesario -->
+                                    </select>
+                                </div>
+                    
+                                <button 
+                                    type="submit" 
+                                    id="get_paypalurl"
+                                    class="w-full bg-indigo-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition duration-300">
+                                    Comprar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    
                 </div>
                 
                 <div class="bg-gray-50 p-6 rounded-lg shadow-lg">
@@ -46,10 +115,10 @@
                         <!-- Imagen del Banco Popular Dominicano -->
                         <img src="https://www.saval.com.do/wp-content/uploads/2021/11/banco_popular-01.png" alt="Banco Popular Dominicano" class="w-12 h-12 mr-4">
                         <div>
-                            <h3 class="text-base md:text-lg font-semibold text-gray-800">{{user.bank_info.bank_name}}</h3>
-                            <p class="text-sm text-gray-600"><strong>Cuenta:</strong> {{user.bank_info.account_number}}</p>
-                            <p class="text-sm text-gray-600"><strong>Swift:</strong> {{user.bank_info.swift_code}}</p>
-                            <p class="text-sm text-gray-600"><strong>Dirección:</strong> {{user.bank_info.bank_address}}</p>
+                            <h3 class="text-base md:text-lg font-semibold text-gray-800">{{user.bank_information.bank_name}}</h3>
+                            <p class="text-sm text-gray-600"><strong>Cuenta:</strong> {{user.bank_information.account_number}}</p>
+                            <p class="text-sm text-gray-600"><strong>Swift:</strong> {{user.bank_information.swift_code}}</p>
+                            <p class="text-sm text-gray-600"><strong>Dirección:</strong> {{user.bank_information.bank_address}}</p>
                         </div>
                     </div>
                     <a href="#" class="block bg-blue-600 text-white py-3 px-5 rounded-lg shadow-md text-center hover:bg-blue-700 transition duration-200 ease-in-out">

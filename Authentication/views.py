@@ -74,12 +74,12 @@ class Registration(View):
             phone_number='+123456789',
             id_history=[{"event": "registered", "date": "2024-09-01"}]
             )
-
-            # Establece una contraseña para el usuario
             user.set_password(request.POST['password'])
 
-            # Guarda el usuario en la base de datos
             user.save()
+            User_Profile = UserProfile(user=user).save()
+
+            
             return redirect('/login/')
         except IntegrityError as e:
             if 'duplicate key value violates unique constraint' in str(e):

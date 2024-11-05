@@ -2,8 +2,11 @@ from django.shortcuts import render
 from .models import UserProfile
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
-# Create your views here.
+from django.contrib.auth.decorators import login_required
 import json
+
+
+@login_required
 def gui_update(request):
     if request.method == 'POST':
         # Obtener el perfil del usuario autenticado

@@ -7,9 +7,12 @@ from django.http import JsonResponse, HttpResponse
 import logging, pdb
 from django.db.models import Q
 from django.core.paginator import Paginator
-
+from PayPal_ChessCoin.Nush_ChessCoin import NushChessCoin
 from django.shortcuts import get_object_or_404
-# Create your views here.
+from ChessCoin.models import ChessCoin_Transaccions
+
+
+
 def home(request):
     return redirect('/wallet/')
 
@@ -58,7 +61,7 @@ def lobbies(request, page):
         id_info = False
 
    
-    return render(request, 'lobbies.html', {'lobbies_information': page_obj, 'before': str(page - 1), 'next':Next, 'user' : user, "lobbies": 'true', 'join': id_info })
+    return render(request, 'lobbies.html', {'lobbies_information': page_obj, 'wallet_amount': request.user.wallet, 'before': str(page - 1), 'next':Next, 'user' : user, "lobbies": 'true', 'join': id_info })
 
 @login_required
 def wallet(request):
@@ -72,7 +75,7 @@ def wallet(request):
         id_info = str(search_lobbies.id)
     except:
         id_info = False
-    return render(request, 'wallet.html', {"wallet": 'true', 'user' : request.user, 'join': id_info})
+    return render(request, 'wallet.html', {"wallet": 'true','wallet_amount': request.user.wallet ,'user' : request.user, 'join': id_info})
 
 @login_required
 def join(request, id_info):
@@ -85,16 +88,23 @@ def join(request, id_info):
 
     if not match_query.white_player:
         match_query.white_player = username
-        match_query.save()
         request.session['chess_match'] = match_query.id
-        return redirect(f'/chess/{str(match_query.id)}')
+        match_query.save()
+
     else:
         match_query.black_player = username
         match_query.game_status = 'completed'
-        match_query.save()
         request.session['chess_match'] = match_query.id
-        return redirect(f'/chess/{str(match_query.id)}')
-        
+        match_query.save()
+    
+    transaction_nush = NushChessCoin().create_transaction(id_info)
+    
+    if not transaction_nush :
+        match_query.game_status = 'cancelled'
+   
+    match_query.save()
+
+    return redirect(f'/chess/{str(match_query.id)}')
 
 
 @login_required
@@ -121,10 +131,11 @@ def CreateMatch(request, amount, piece,timer):
             new_lobby = ChessLobbies.objects.create(
                 white_player=player_username,
                 game_status='waiting',
-                bet_amount=amount,
+                lobby_wallet=amount*2,
                 timer_black_player=timer * 60,
                 timer_white_player=timer * 60,
                 timer = timer,
+                amount=amount,
                 this_chessboard= {
                         "logs": {
                             "log_move": [],
@@ -141,10 +152,11 @@ def CreateMatch(request, amount, piece,timer):
              new_lobby = ChessLobbies.objects.create(
                 black_player=player_username,
                 game_status='waiting',
-                bet_amount=amount,
+                lobby_wallet=amount*2,
                 timer_black_player=timer * 60,
                 timer_white_player=timer * 60,
                 timer = timer,
+                amount=amount * 2,
                 this_chessboard= {
                         "logs": {
                             "log_move": [],
@@ -182,37 +194,38 @@ def chess(request, ID):
             
         }) if player_color else HttpResponse(f'No disponible: {ID}')
 
-    elif lobby.game_status in ['timeout', 'Check Mate!', 'draw']:
-        return redirect('/result/' + lobby.id)
 
+    else:
+        return HttpResponse(f'lobby.status: {lobby.game_status}' )
 
+@login_required
 def result(request, ID):
-    lobby = ChessLobbies.objects.filter(id=ID).first()
-    player_color = 'white' if request.session.get('username') == lobby.white_player else 'black' if request.session.get('username') == lobby.black_player else None
-    if lobby.game_status in ['waiting', 'playing', 'completed']:
-        return redirect('/chess/' + lobby.id)
+    try:
+        NushChessCoin().complete_transaccion(ID)
+        lobby = ChessLobbies.objects.get(id=ID)
+        transaccion_info = ChessCoin_Transaccions.objects.get(id=ID)
+    except (ChessLobbies.DoesNotExist, ChessCoin_Transaccions.DoesNotExist):
+        return error_view(request, "Match not found")  # Redirigir a la vista de error
+
+    username = request.session.get('username')
+    player_color = 'white' if username == lobby.white_player else 'black' if username == lobby.black_player else None
+    
+    if player_color is None:
+        return error_view(request, "Match not found")  # Redirigir a la vista de error
+
     info_dict = {
         'id': player_color,
         'cookie': request.session.get('rT7gM2sP5qW8jN4'),
-        'result': 'true',
+        'result': username == lobby.winning_player,
         'lobby_info': lobby,
         'timer_white': lobby.timer_white_player // 60,
         'timer_black': lobby.timer_black_player // 60,
         'timer': lobby.timer,
         'id_lobby': lobby.id,
-        'player': request.session.get('username'),
+        'player': username,
         'status': True,
-        'board_fen':lobby.this_chessboard['board_fen']
+        'board_fen': lobby.this_chessboard['board_fen'],
+        'ChessCoin': (transaccion_info.amount - transaccion_info.fee_match_amount) if username == lobby.winning_player else transaccion_info.amount
     }
-    if request.session.get('username') == lobby.winning_player:
 
-        info_dict['result'] = True
-        info_dict['ChessCoin']= lobby.bet_amount / 2 if lobby.bet_amount < 10 else float(lobby.bet_amount)* 0.90
-        
-    else:
-        info_dict['result'] = False
-        info_dict['ChessCoin']= lobby.bet_amount 
-    return render(request, 'result.html',info_dict ) if player_color else HttpResponse(f'No disponible: {ID}')
-
-
-
+    return render(request, 'result.html', info_dict)

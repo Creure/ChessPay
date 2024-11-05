@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'chess',
     'ChessCoin',
     'UserInformationManager',
+    'PayPal_ChessCoin',
     
 ]
 
@@ -163,5 +164,7 @@ CHANNEL_LAYERS = {
 
 
 
-CLIENT_ID = "AYuP12zmJczMuV5SDX27rCdmwSPZYPkLkmkkYQKHWfCM6qNksTFWFcOPQNaoRlPl2cWEvZ6fuyXw4zgn"
-CLIENT_SECRET = 'EG028OjLYBFUHAeIDxueulMYvM4k9mObjEX1-YqQDj7gZzrfEEQTuNHp8EcXc-GOjF33HIKnuPFeVzzs'
+# Api paypal client information
+PAYPAL_CLIENT_ID = 'ASBq_1npXLZSQQb8PMdlZk8Y963eo7eD4uGC6KTVGPjLjQViGLPAsyZk5y3Wx5JPOJGUmmSN2eQqZsVq'
+PAYPAL_CLIENT_SECRET = 'ENwiQRdSeKJRK0QWIxjWEB3m9qQKwPy6HjoyqD1TqWNf1zEo7GUdLU3pkAMq9UJSlxV9JAHZi0QjIIQo'
+PAYPAL_MODE = 'sandbox'  

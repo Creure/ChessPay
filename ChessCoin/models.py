@@ -1,16 +1,26 @@
+import uuid
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 from Authentication.models import User
+from django.core.validators import MinValueValidator
 
-class BankInformation(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='bank_info')
-    bank_name = models.CharField(max_length=100, verbose_name=_("Bank Name"))
-    bank_type = models.CharField(max_length=50, blank=True, null=True, verbose_name=_("Bank Type"))
-    swift_code = models.CharField(max_length=11, blank=True, null=True, verbose_name=_("SWIFT Code"))
-    account_number = models.CharField(max_length=34, blank=True, null=True, verbose_name=_("Account Number"))
-    bank_address = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Bank Address"))
-    phone_number = models.CharField(max_length=20, blank=True, null=True, verbose_name=_("Phone Number"))
-    additional_info = models.TextField(blank=True, null=True, verbose_name=_("Additional Information"))
 
+class ChessCoin_Transaccions(models.Model):
+    id = models.CharField(primary_key=True, max_length=50, editable=False)
+    white_player = models.CharField(max_length=100, blank=True,)
+    black_player = models.CharField(max_length=100 , blank=True)
+    game_status = models.CharField(max_length=20, default='None')
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    ended_at = models.DateTimeField(null=True)
+    this_chessboard = models.JSONField(default=dict)
+    winning_player = models.CharField(max_length=100, blank=True, null=True, default='N/A')
+    timer_black_player = models.PositiveIntegerField(default=10)
+    timer_white_player = models.PositiveIntegerField(default=10)
+    timer = models.PositiveIntegerField(default=10)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    transaccion_status = models.BooleanField(default=False) 
+    lobby_wallet = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    fee_match_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    validation_message = models.CharField(max_length=100, blank=True,)
     def __str__(self):
-        return self.bank_name
+        return f"ChessCoin_Transaccions {self.id}"

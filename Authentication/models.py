@@ -48,7 +48,7 @@ class UserManager(BaseUserManager):
 class User(AbstractUser):
     identification_number = models.CharField(max_length=20, unique=True, primary_key=True, verbose_name=_("Identification Number"))
     id_image = models.CharField(max_length=100, blank=True, null=True, verbose_name=_("ID Image"))
-    wallet = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, verbose_name=_("Wallet"))    
+    wallet = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     email = models.EmailField(max_length=254, unique=True, verbose_name=_("Email"))
     first_name = models.CharField(max_length=30, verbose_name=_("First Name"))
     last_name = models.CharField(max_length=30, verbose_name=_("Last Name"))
@@ -57,7 +57,7 @@ class User(AbstractUser):
     id_history = models.JSONField(blank=True, null=True, verbose_name=_("ID History"))
     
     objects = UserManager()
-
+    
     def __str__(self):
         return self.username
 
