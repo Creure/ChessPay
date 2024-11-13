@@ -15,7 +15,7 @@ from PayPal_ChessCoin.Nush_ChessCoin import NushChessCoin
 
 from ChessCoin.models import ChessCoin_Transaccions
 
-logging.basicConfig(filename='debug.log',level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s: ') # move to settings
+logging.basicConfig(filename='socket.log',level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s: ')
 
 
 

@@ -1,6 +1,5 @@
 # -*- coding:utf8 -*-
 import random
-from colorama import Fore
 import sys
 import zlib
 class ChessCoinEncription:
