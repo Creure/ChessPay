@@ -57,7 +57,7 @@ class Registration(View):
 
     def get(self,request):
         if not request.user.is_authenticated:
-            return render(request, 'Register.html')
+            return render(request, 'register.html')
         else:
             return redirect('/')
     
