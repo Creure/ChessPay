@@ -6,6 +6,8 @@ from django.db import IntegrityError
 from decimal import Decimal
 from django.utils import timezone
 import pdb
+
+
 class NushChessCoin:
     def __init__(self,hash=None, amount=None, payment_id=None, payer_id=None, merchant_id=None, ChessCoin_SKU=None, create_time=None, update_time=None):
         original_prices = {
@@ -75,7 +77,7 @@ class NushChessCoin:
             transaction_info = ChessCoin_Transaccions.objects.get(id=id)
             if transaction_info.validation_message == 'CFT50' or transaction_info.validation_message == 'CFT10':
                 return True
-        except ObjectDoesNotExist:
+        except:
             return
 
         if lobby.game_status in ['Check Mate!', 'draw']:
@@ -112,10 +114,10 @@ class NushChessCoin:
 
         white_player.wallet += amount
         black_player.wallet += amount
-        transaccion_info.validation_message = 'CCRR'
-        transaccion_info.game_status = 'Cancelled [CCRR]'
+        transaction_info.validation_message = 'CCRR'
+        transaction_info.game_status = 'Cancelled [CCRR]'
         white_player.save()
         black_player.save()
-        transaccion_info.save()
+        transaction_info.save()
         return True
 

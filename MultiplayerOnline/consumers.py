@@ -1,19 +1,16 @@
-from channels.generic.websocket import AsyncWebsocketConsumer
-from Authentication.models import AuthenticationTokenTime
-from os import path
-import json
-from channels.layers import get_channel_layer
-from django.conf import settings
-import logging
+import django
+django.setup()
 from django.shortcuts import get_object_or_404
-from MultiplayerOnline.models import ChessLobbies
-import chess, pdb
-import asyncio
 from channels.db import database_sync_to_async
-import datetime
 from PayPal_ChessCoin.Nush_ChessCoin import NushChessCoin
-
+from Authentication.models import AuthenticationTokenTime
+from MultiplayerOnline.models import ChessLobbies
+from django.conf import settings
+from channels.layers import get_channel_layer
+from channels.generic.websocket import AsyncWebsocketConsumer
+from os import path
 from ChessCoin.models import ChessCoin_Transaccions
+import json, logging, chess, pdb, asyncio, datetime
 
 logging.basicConfig(filename='socket.log',level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s: ')
 
